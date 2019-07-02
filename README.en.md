@@ -1,22 +1,75 @@
-# pyadmin
+# T-Rest
+* T = Tornado
+* Rest = Restful
 
 #### Description
-{**When you're done, you can delete the content in this README and update the file with details for others getting started with your repository**}
+Web MVC framework based on Tornado combined with asyncio
 
 #### Software Architecture
 Software architecture description
 
 #### Installation
 
-1. xxxx
-2. xxxx
-3. xxxx
+Put the following line of code into the Pipfile file [packages]
+> trest = {editable = true,git = "https://gitee.com/leeyi/trest.git"}
+
+or
+> pipenv install -e git+https://gitee.com/leeyi/trest.git#egg=trest
+
+or
+> pip install git+https://gitee.com/leeyi/trest.git
 
 #### Instructions
+After pipenv install under the root directory, add server.py
+```
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-1. xxxx
-2. xxxx
-3. xxxx
+import os
+import sys
+import resource
+resource.setrlimit(resource.RLIMIT_NOFILE, (10240, 9223372036854775807))
+
+from tornado.options import define
+
+# sys.path.insert(0, '/Users/leeyi/workspace/py3/trest')
+ROOT_PATH = os.getcwd()
+define('ROOT_PATH', ROOT_PATH)
+
+# 把当前目录添加到 sys.path 开头
+sys.path.insert(0, ROOT_PATH)
+
+from trest.webserver import run
+
+
+if __name__ == "__main__":
+    try:
+        run()
+    except KeyboardInterrupt:
+        sys.exit(0)
+
+```
+run
+```
+pipenv shell
+run server.py
+```
+
+##### The API response
+Use the raise JsonError wherever
+```
+from trest.exception import JsonError
+
+raise JsonError('msg')
+raise JsonError('msg', 0)
+raise JsonError('msg', 1, [])
+raise JsonError('msg', 1, [1,2,3])
+```
+
+#### Test
+```
+pipenv install --skip-lock
+```
 
 #### Contribution
 
