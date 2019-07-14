@@ -11,13 +11,13 @@ Software architecture description
 #### Installation
 
 Put the following line of code into the Pipfile file [packages]
-> trest = {editable = true,git = "https://gitee.com/leeyi/trest.git"}
+> trest = {editable = true,git = "https://gitee.com/leeyi/trest.git",ref = "master"}
 
 or
-> pipenv install -e git+https://gitee.com/leeyi/trest.git#egg=trest
+> pipenv install -e git+https://gitee.com/leeyi/trest.git@master#egg=trest
 
 or
-> pip install git+https://gitee.com/leeyi/trest.git
+> pip install git+https://gitee.com/leeyi/trest.git#egg=trest
 
 #### Instructions
 After pipenv install under the root directory, add server.py
@@ -52,7 +52,7 @@ if __name__ == "__main__":
 run
 ```
 pipenv shell
-run server.py
+python server.py
 ```
 
 ##### The API response
@@ -64,6 +64,64 @@ raise JsonError('msg')
 raise JsonError('msg', 0)
 raise JsonError('msg', 1, [])
 raise JsonError('msg', 1, [1,2,3])
+```
+
+#### Demo
+* [https://gitee.com/leeyi/py_admin](https://gitee.com/leeyi/py_admin/tree/dev/)
+```
+from trest.exception import JsonError
+from trest.router import get
+from trest.router import delete
+from trest.router import post
+from trest.router import put
+
+"""
+in applications/admin/handlers/abcd.py
+# file name not start with _ and method name is unique
+url like this,
+    /admin/welcome
+    /admin/welcome2
+    /welcome3
+    /admin/welcome4
+"""
+
+class WelcomeHandler(CommonHandler):
+    @get('welcome')
+    @required_permissions()
+    @tornado.web.authenticated
+    def welcome_get(self, *args, **kwargs):
+        """后台首页
+        """
+        # menu = AdminMenu.main_menu()
+        # print('menu ', menu)
+        # self.show('abc')
+        params = {
+        }
+        self.render('dashboard/welcome.html', **params)
+
+    @get('welcome2')
+    @required_permissions()
+    @tornado.web.authenticated
+    def welcome_get2(self, *args, **kwargs):
+        """后台首页
+        """
+        self.success(data=['welcome2'])
+
+    @get('/welcome3')
+    @required_permissions()
+    @tornado.web.authenticated
+    def welcome_get(self, *args, **kwargs):
+        """后台首页
+        """
+        self.success(data=['welcome3'])
+
+    @post('welcome4')
+    @required_permissions()
+    @tornado.web.authenticated
+    def welcome_post(self, *args, **kwargs):
+        """后台首页
+        """
+        self.success(data=['welcome3'])
 ```
 
 #### Test

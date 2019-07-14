@@ -3,7 +3,8 @@
 * Rest = Restful
 
 #### 介绍
-* 基于Tornado结合asyncio的web mvc框架
+基于Tornado结合asyncio的web mvc框架
+
 * 支持AMQP
 *
 
@@ -17,10 +18,10 @@
 #### 安装教程
 
 把下面一行代码放入Pipfile文件 [packages]下面
-> trest = {editable = true,git = "https://gitee.com/leeyi/trest.git"}
+> trest = {editable = true,git = "https://gitee.com/leeyi/trest.git",ref = "master"}
 
 或者直接
-> pipenv install -e git+https://gitee.com/leeyi/trest.git#egg=trest
+> pipenv install -e git+https://gitee.com/leeyi/trest.git@master#egg=trest
 
 或者
 > pip install git+https://gitee.com/leeyi/trest.git
@@ -58,7 +59,65 @@ if __name__ == "__main__":
 run
 ```
 pipenv shell
-run server.py
+python server.py
+```
+
+#### Demo
+* [https://gitee.com/leeyi/py_admin](https://gitee.com/leeyi/py_admin/tree/dev/)
+```
+from trest.exception import JsonError
+from trest.router import get
+from trest.router import delete
+from trest.router import post
+from trest.router import put
+
+"""
+在 applications/admin/handlers/abcd.py
+# 文件名称不以 _ 开头，明确API方法名称要唯一
+url 像这样,
+    /admin/welcome
+    /admin/welcome2
+    /welcome3
+    /admin/welcome4
+"""
+
+class WelcomeHandler(CommonHandler):
+    @get('welcome')
+    @required_permissions()
+    @tornado.web.authenticated
+    def welcome_get(self, *args, **kwargs):
+        """后台首页
+        """
+        # menu = AdminMenu.main_menu()
+        # print('menu ', menu)
+        # self.show('abc')
+        params = {
+        }
+        self.render('dashboard/welcome.html', **params)
+
+    @get('welcome2')
+    @required_permissions()
+    @tornado.web.authenticated
+    def welcome_get2(self, *args, **kwargs):
+        """后台首页
+        """
+        self.success(data=['welcome2'])
+
+    @get('/welcome3')
+    @required_permissions()
+    @tornado.web.authenticated
+    def welcome_get(self, *args, **kwargs):
+        """后台首页
+        """
+        self.success(data=['welcome3'])
+
+    @post('welcome4')
+    @required_permissions()
+    @tornado.web.authenticated
+    def welcome_post(self, *args, **kwargs):
+        """后台首页
+        """
+        self.success(data=['welcome3'])
 ```
 
 ##### API响应

@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 pep8 = "*"
+gino = "*"
 
 [packages]
 tornado = "*"
@@ -16,11 +17,11 @@ rsa = "*"
 pycryptodome = "*"
 pytz = "*"
 python-dateutil = "*"
-
 requests = "*"
 raven = "*"
-gino = "*"
 pika = "*"
+qrcode = "*"
+oss2 = "*"
 
 [requires]
 python_version = "3.7"

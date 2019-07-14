@@ -28,24 +28,27 @@ def get_modules(package="."):
     # endfor
     return modules
 
-# {'admin':[(r'',hander)], }
-app_router = {}
 def get_handlers(app_name):
     namespace = f'{settings.ROOT_PATH}/applications/{app_name}/handlers/'
     # print(namespace)
     modules = get_modules(namespace)
     # print('modules ', type(modules), modules)
-
     # 将包下的所有模块，逐个导入，并调用其中的函数
     package = f'applications.{app_name}.handlers'
     handlers = []
     for module in modules:
         if not module:
             continue
+        if module.startswith('..'):
+            continue
+        # print('module ', type(module), module)
         try:
             module = importlib.import_module(module, package)
+            # print('module2 ', type(module), module)
         except Exception as e:
-            pass
+            # print('e ', type(e), e)
+            # pass
+            continue
         # print('module ', type(module), module)
         data = []
         for attr in dir(module):
@@ -58,28 +61,17 @@ def get_handlers(app_name):
             # func_list = []
             # print(dir(hander))
             for name, val in inspect.getmembers(hander, lambda f: callable(f) and hasattr(f, '_path')):
+                path = val._path if val._path.startswith('/') else rf'/{app_name}/{val._path}'
+                method = val._method.lower()
                 # print('----------------------------------------------------------------------------')
                 # print('hander', type(hander), hander)
                 # print('name', type(name), name)
+                # print('path', type(path), path)
                 # print('val', val._path, type(val), val, dir(val))
                 # print("\n\n")
-                path = val._path if val._path.startswith('/') else rf'/{app_name}/{val._path}'
-                method = val._method.lower()
-                if method=='get':
-                    hander.get = val
-                elif method=='post':
-                    hander.post = val
-                elif method=='pu':
-                    hander.pu = val
-                elif method=='delete':
-                    hander.delete = val
-                elif method=='head':
-                    hander.head = val
-                elif method=='patch':
-                    hander.patch = val
-                elif method=='options':
-                    hander.options = val
-                handlers.append((path, hander))
+                NewClass = type(name, (hander,), {})
+                setattr(NewClass, method, val)
+                handlers.append((path, NewClass))
         # endfor
     # endfor
     return handlers
