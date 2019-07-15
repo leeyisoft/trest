@@ -19,7 +19,6 @@ from .cache import close_caches
 from .utils import sys_config
 
 
-
 class BaseHandler(SentryMixin, tornado.web.RequestHandler):
     response_to_mq = False
 

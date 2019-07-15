@@ -28,7 +28,7 @@ def get_modules(package="."):
     # endfor
     return modules
 
-def get_handlers(app_name):
+async def get_handlers(app_name):
     namespace = f'{settings.ROOT_PATH}/applications/{app_name}/handlers/'
     # print(namespace)
     modules = get_modules(namespace)
@@ -63,7 +63,7 @@ def get_handlers(app_name):
             for name, val in inspect.getmembers(hander, lambda f: callable(f) and hasattr(f, '_path')):
                 path = val._path if val._path.startswith('/') else rf'/{app_name}/{val._path}'
                 method = val._method.lower()
-                # print('----------------------------------------------------------------------------')
+                # print('-----------------------------------------------------------')
                 # print('hander', type(hander), hander)
                 # print('name', type(name), name)
                 # print('path', type(path), path)
@@ -71,6 +71,7 @@ def get_handlers(app_name):
                 # print("\n\n")
                 NewClass = type(name, (hander,), {})
                 setattr(NewClass, method, val)
+                # print('dir NewClass : ', dir(NewClass))
                 handlers.append((path, NewClass))
         # endfor
     # endfor

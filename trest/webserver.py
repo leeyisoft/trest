@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import warnings
-import logging
-import sys
 import os
+import sys
+import time
+import logging
 import asyncio
-import tornado.httpserver
+import warnings
+import tornado.web
 import tornado.ioloop
 import tornado.options
-import tornado.web
+import tornado.httpserver
 
 from tornado.options import options
 from tornado.options import parse_command_line
@@ -38,6 +39,8 @@ importlib.reload(sys)
 
 
 class Server(object):
+    start_time = None
+
     def __init__(self, ioloop=None):
         self.httpserver = None
         self.router = None
@@ -92,7 +95,9 @@ class Server(object):
             raise ConfigError('settings.INSTALLED_APPS is empty')
         rules = []
         for app_name in apps:
-            handlers = get_handlers(app_name)
+            handlers = self.ioloop.run_until_complete(
+                get_handlers(app_name)
+            )
             obj_str = f'applications.{app_name}.urls.urls'
             urls = import_object(obj_str)
             for url_obj in urls:
@@ -137,6 +142,7 @@ class Server(object):
             self.ioloop = asyncio.get_event_loop()
         if self.http_server:
             self.http_server.start()
+        print(f'starting use time: {time.time() - self.start_time} second')
         self.ioloop.run_forever().start()
 
     def _print_settings_info(self):
@@ -224,6 +230,9 @@ class Server(object):
 
 
 def run(sockets=None, **kwargs):
-    server = Server()
+    start_time = time.time()
+    ioloop = asyncio.get_event_loop()
+    server = Server(ioloop=ioloop)
+    server.start_time = start_time
     server.load_all(sockets, **kwargs)
     server.start()
