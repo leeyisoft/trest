@@ -29,7 +29,6 @@ from .exception import ConfigError
 from .exception import ArgumentError
 from .application import Application
 from .settings_manager import settings
-from .logger import ProcessLogTimedFileHandler
 from .logger import enable_pretty_logging
 from .handler import BaseHandler
 from .router import get_handlers
@@ -105,10 +104,6 @@ class Server(object):
                     u2 = list(url_obj)
                     u2[0] = rf'/{app_name}/{url_obj[0]}'
                     url_obj = tuple(u2)
-                elif type(url_obj)!=tuple and issubclass(url_obj, BaseHandler):
-                    print(type(url_obj), url_obj)
-                else:
-                    pass
                 handlers.append(url_obj)
             # endfor
             app = self._install_application(handlers)
@@ -171,8 +166,7 @@ class Server(object):
             options.logging = None
         if options.log_file_prefix and options.log_port_prefix:
             options.log_file_prefix += ".%s" % options.port
-        if options.log_patch:
-            logging.handlers.TimedRotatingFileHandler = ProcessLogTimedFileHandler
+
         tornado_logger = logging.getLogger('tornado')
         enable_pretty_logging(logger=tornado_logger)
         logdir = options.logging_dir or settings.LOGGING_DIR
@@ -218,9 +212,10 @@ class Server(object):
                            help="The mode of rotating files(time or size)")
         except:
             pass
+        default_ip = '0.0.0.0'
         options.define("port", default=5080, help="run server on it", type=int)
         options.define("settings", default='', help="setting module name", type=str)
-        options.define("address", default='0.0.0.0', help='listen host,default:0.0.0.0', type=str)
+        options.define("address", default=default_ip, help=f'listen host,default:{default_ip}', type=str)
         options.define("log_patch", default=True,
                        help='Use ProcessTimedRotatingFileHandler instead of the default TimedRotatingFileHandler.',
                        type=bool)

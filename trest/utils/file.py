@@ -4,7 +4,6 @@
 import os
 import hashlib
 import mimetypes
-import oss2
 import tornado.httputil
 
 from ..settings_manager import settings
@@ -12,45 +11,6 @@ from .image import download_img
 
 
 class Uploader():
-
-    @staticmethod
-    def oss(upload_file, upload_path='test', headers=None, protocol='http'):
-        """
-        上传文件到阿里oss
-        :param upload_file:    上传的文件
-        :param upload_path:    上传的地址
-        :param headers:        当网络文件时的下载头
-        :param protocol:       返回文件的协议
-        :return:
-        """
-        # oss 配置
-        accesskeyid = settings.oss_config.get('accesskeyid')
-        accesskey   = settings.oss_config.get('accesskey')
-        endpoint    = settings.oss_config.get('endpoint')
-        bucket_name = settings.oss_config.get('bucket_name')
-        auth        = oss2.Auth(accesskeyid, accesskey)
-        bucket      = oss2.Bucket(auth, '%s://%s' % (protocol, endpoint,), bucket_name)
-
-        # 文件类型
-        if not isinstance(upload_file, tornado.httputil.HTTPFile):
-            # 本地文件
-            if os.path.isfile(upload_file):
-                file_path = upload_file
-                ext = upload_file.split('.')[-1]
-            # 网络文件
-            else:
-                (file_path, ext) = download_img(upload_file, headers=headers)
-            upload_name = '%s/%s.%s' % (upload_path, FileUtil.file_md5(file_path), ext)
-            bucket.put_object_from_file(upload_name, file_path)
-        # 数据流类型
-        else:
-            hash = hashlib.md5()
-            hash.update(upload_file['body'])
-            ext = upload_file['filename'].split('.')[-1]
-            file_name = hash.hexdigest()
-            upload_name = '%s/%s.%s' % (upload_path, file_name, ext)
-            bucket.put_object(upload_name, upload_file['body'])
-        return '%s://%s.%s/%s' % (protocol, bucket_name, endpoint, upload_name)
 
     @staticmethod
     def upload_img(file_md5, img, save_name, path, param):

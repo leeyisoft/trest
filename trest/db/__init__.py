@@ -46,32 +46,32 @@ class Model(MetaBaseModel):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def as_dict(self, filds=[]):
+    def as_dict(self, fields):
+        """ 模型转换为字典 """
         items = {}
         for column in self.__table__.columns:
             val = getattr(self, column.name)
             val = '' if val is None else val
             if column.name.endswith('_at'):
                 items['dt_%s'%column.name] = utime.ts_to_str(int(val), to_tz=None) if val else ''
-            datetime_tuple = (datetime.datetime, datetime.date)
+            datetime_tuple = (datetime.datetime, datetime.date, Decimal)
             if isinstance(val, datetime_tuple):
                 val = str(val)
-            elif isinstance(val, Decimal):
-                val = str(val)
-            if type(filds)==list and len(filds)>0:
-                if column.name in filds:
+            if type(fields)==list and len(fields)>0:
+                if column.name in fields:
                     items[column.name] = val
             else :
                 items[column.name] = val
         return items
 
 #指定decode_responses为True，表示输出为字符串
+_default_redis_host = '127.0.0.1'
 redisdb = redis.StrictRedis(
-    host=settings.redis_config.get('host', '127.0.0.1'),
-    port=settings.redis_config.get('port', 6379),
-    password=settings.redis_config.get('password', ''),
-    charset=settings.redis_config.get('charset', 'utf-8'),
-    db=settings.redis_config.get('db', 0),
+    host = settings.redis_config.get('host', _default_redis_host),
+    port = settings.redis_config.get('port', 6379),
+    password = settings.redis_config.get('password', ''),
+    charset = settings.redis_config.get('charset', 'utf-8'),
+    db = settings.redis_config.get('db', 0),
     decode_responses=True)
 
 def mysqldb(dbt='master'):

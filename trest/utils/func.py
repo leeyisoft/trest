@@ -176,27 +176,6 @@ def is_phone(phone, region='CN'):
 def is_phone_or_mobile(phone, region='CN'):
     return func.is_mobile(phone, region) or func.is_phone(phone, region)
 
-def filter_lang(lang):
-    """
-    客户端语言转换为与数据库中一致
-    :param lang:
-    :return:
-    """
-    if lang in ['en', 'us', 'en_US', 'en-US']:
-        return 'en'
-    elif lang in ['cn', 'zh_CN', 'zh-CN', 'zh-Hans-CN']:
-        return 'cn'
-    elif lang in ['ph', 'en_PH', 'en-PH']:
-        return 'en'
-    elif lang in ['id', 'id_ID', 'id-ID']:
-        return 'id'
-    elif lang in ['vi', 'vi_VN', 'vi-VN']:
-        return 'vi'
-    elif lang in ['tw', 'zh_TW', 'zh-TW']:
-        return 'tw'
-    else:
-        return 'en'
-
 def sha256_sign(val):
     """
     SHA256签名
@@ -228,19 +207,3 @@ def option_change(options):
         item['label'] = options[key]
         list.append(item)
     return list
-
-def as_dict(val_dict):
-    """
-    连接查询数据转字段
-    :param val_dict:
-    :return:
-    """
-    for key in list(val_dict.keys()):
-        if key.endswith('_at'):
-            val_dict['dt_%s' % key] = utime.ts_to_str(int(val_dict[key]), to_tz=None) if val_dict[key] else ''
-        datetime_tuple = (datetime.datetime, datetime.date)
-        if isinstance(val_dict[key], datetime_tuple):
-            val_dict[key] = str(val_dict[key])
-        elif isinstance(val_dict[key], Decimal):
-            val_dict[key] = str(val_dict[key])
-    return val_dict

@@ -49,8 +49,6 @@ def push_email(param, email_platform='default'):
     return push_to_mq(param, option)
 
 def push_to_mq(param, option):
-    # dstr =['%s=%s'%(k.strip(), ','.join([v.decode('utf-8').strip() for v in vl])) for (k, vl) in data.items()]
-    # param = {k.strip(): ','.join([v.decode('utf-8').strip() for v in vl]) for (k, vl) in data.items()}
     msg = {}
     msg['msg_type'] = option.get('msg_type', '')
     msg['msg_md5'] = func.md5(json.dumps(param))

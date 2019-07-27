@@ -436,7 +436,8 @@ class Pagination(object):
                     (num > self.page - left_current - 1 and
                              num < self.page + right_current) or \
                             num > self.pages - right_edge:
-                if last + 1 != num:
+                last_ = last + 1
+                if last_ != num:
                     yield None
             yield num
             last = num

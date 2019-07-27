@@ -84,10 +84,8 @@ class RSAEncrypter(object):
             res = True
         except (ValueError, TypeError) as e:
             raise e
-            pass
         except Exception as e:
             raise e
-            pass
         return res
 
 
@@ -104,8 +102,6 @@ class AESEncrypter(object):
 
         t2 = chr(padding_len) * padding_len
         t2 = t2.encode('utf8')
-        # print('text ', type(text), text)
-        # print('t2 ', type(t2), t2)
         t3 = text + t2
         return t3
 
@@ -146,7 +142,6 @@ class AESSkyPay:
         calculates the number of missing chars to BLOCK_SIZE and pads with
         ord(number of missing chars)
         @see: http://www.di-mgt.com.au/cryptopad.html
-
 
         @param s: string to pad
         @type s: string

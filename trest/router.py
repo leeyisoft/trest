@@ -29,10 +29,9 @@ def get_modules(package="."):
     return modules
 
 async def get_handlers(app_name):
+    """ 自动加载特定APP里面的handler """
     namespace = f'{settings.ROOT_PATH}/applications/{app_name}/handlers/'
-    # print(namespace)
     modules = get_modules(namespace)
-    # print('modules ', type(modules), modules)
     # 将包下的所有模块，逐个导入，并调用其中的函数
     package = f'applications.{app_name}.handlers'
     handlers = []
@@ -41,37 +40,23 @@ async def get_handlers(app_name):
             continue
         if module.startswith('..'):
             continue
-        # print('module ', type(module), module)
         try:
             module = importlib.import_module(module, package)
-            # print('module2 ', type(module), module)
         except Exception as e:
-            # print('e ', type(e), e)
-            # pass
             continue
-        # print('module ', type(module), module)
-        data = []
+
         for attr in dir(module):
             if attr.startswith('_'):
                 continue
             if not attr.endswith('Handler'):
                 continue
-
             hander = getattr(module, attr)
-            # func_list = []
-            # print(dir(hander))
-            for name, val in inspect.getmembers(hander, lambda f: callable(f) and hasattr(f, '_path')):
+            params = inspect.getmembers(hander, lambda f: callable(f) and hasattr(f, '_path'))
+            for name, val in params:
                 path = val._path if val._path.startswith('/') else rf'/{app_name}/{val._path}'
                 method = val._method.lower()
-                # print('-----------------------------------------------------------')
-                # print('hander', type(hander), hander)
-                # print('name', type(name), name)
-                # print('path', type(path), path)
-                # print('val', val._path, type(val), val, dir(val))
-                # print("\n\n")
                 NewClass = type(name, (hander,), {})
                 setattr(NewClass, method, val)
-                # print('dir NewClass : ', dir(NewClass))
                 handlers.append((path, NewClass))
         # endfor
     # endfor
@@ -84,12 +69,6 @@ def get(*dargs, **dkargs):
         path = dargs[0]
         @functools.wraps(method)
         def _wrapper(*args, **kargs):
-            # path = dargs[0]
-            # self = args[0]
-            # print('path ', type(path), path)
-            # print('method ', type(method), method)
-            # print('rest/get', type(self), self)
-            # print("\n\n\n")
             return method(*args, **kargs)
         _wrapper._path = path
         _wrapper._method = 'get'
@@ -103,9 +82,6 @@ def post(*dargs, **dkargs):
         path = dargs[0]
         @functools.wraps(method)
         def _wrapper(*args, **kargs):
-            # path = dargs[0]
-            # self = args[0]
-            # print('rest/post', type(self), self)
             return method(*args, **kargs)
         _wrapper._path = path
         _wrapper._method = 'post'
@@ -119,9 +95,6 @@ def put(*dargs, **dkargs):
         path = dargs[0]
         @functools.wraps(method)
         def _wrapper(*args, **kargs):
-            # path = dargs[0]
-            # self = args[0]
-            # print('rest/put', type(self), self)
             return method(*args, **kargs)
         _wrapper._path = path
         _wrapper._method = 'put'
@@ -135,9 +108,6 @@ def delete(*dargs, **dkargs):
         path = dargs[0]
         @functools.wraps(method)
         def _wrapper(*args, **kargs):
-            # path = dargs[0]
-            # self = args[0]
-            # print('rest/delete', type(self), self)
             return method(*args, **kargs)
         _wrapper._path = path
         _wrapper._method = 'delete'

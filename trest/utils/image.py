@@ -60,20 +60,7 @@ def download_img(url, root_path='/tmp/img/', headers=None):
         print(url)
         raise e
 
-def create_validate_code(
-    size=(120, 40),
-    chars=init_chars,
-    img_type="GIF",
-    mode="RGB",
-    bg_color=(255, 255, 255),
-    fg_color=(0, 0, 255),
-    font_size=14,
-    font_type="CORBEL.TTF",
-    length=4,
-    draw_lines=True,
-    n_line=(1, 4),
-    draw_points=True,
-    point_chance=2):
+def create_validate_code(size, chars = init_chars, img_type = 'GIF', mode = 'RGB', bg_color = (255, 255, 255), fg_color = (0, 0, 255), font_size = 14, font_type = 'CORBEL.TTF', length = 4, draw_lines = True, n_line = (1, 4), draw_points = True, point_chance = 2):
         """
         @todo: 生成验证码图片
         @param size: 图片的大小，格式（宽，高），默认为(120, 40)
@@ -92,11 +79,9 @@ def create_validate_code(
         @return: [0]: PIL Image实例
         @return: [1]: 验证码图片中的字符串
         """
-
         width, height = size # 宽， 高
         img = Image.new(mode, size, bg_color) # 创建图形
         draw = ImageDraw.Draw(img) # 创建画笔
-
         if not os.path.isfile(font_type):
             font_type = '%s/%s' % (settings.STATIC_PATH, 'fonts/CORBEL.TTF')
         def get_chars():
@@ -117,7 +102,6 @@ def create_validate_code(
         def create_points():
                 """绘制干扰点"""
                 chance = min(100, max(0, int(point_chance))) # 大小限制在[0, 100]
-
                 for w in range(width):
                         for h in range(height):
                                 tmp = random.randint(0, 100)
@@ -128,13 +112,10 @@ def create_validate_code(
                 """绘制验证码字符"""
                 c_chars = get_chars()
                 strs = ' %s ' % ' '.join(c_chars) # 每个字符前后以空格隔开
-
                 font = ImageFont.truetype(font_type, font_size)
                 font_width, font_height = font.getsize(strs)
-
                 draw.text(((width - font_width) / 3, (height - font_height) / 3),
                                         strs, font=font, fill=fg_color)
-
                 return ''.join(c_chars)
 
         if draw_lines:
@@ -155,18 +136,16 @@ def create_validate_code(
             float(random.randint(1, 2)) / 500,
         ]
         img = img.transform(size, Image.PERSPECTIVE, params) # 创建扭曲
-
         img = img.filter(ImageFilter.EDGE_ENHANCE_MORE) # 滤镜，边界加强（阈值更大）
-
         return img, strs
 
-def _create_qrcode(data, imgFn):
+def _create_qrcode(data, img_fn):
+    """ 创建二维码 """
     qr = qrcode.QRCode(
-        version=1,
-        #设置容错率为最高
-        error_correction=qrcode.ERROR_CORRECT_H,
-        box_size=6,
-        border=2,
+        version = 1,
+        error_correction = qrcode.ERROR_CORRECT_H, #设置容错率为最高
+        box_size = 6,
+        border = 2,
     )
     qr.add_data(data)
     qr.make(fit=True)
@@ -174,7 +153,7 @@ def _create_qrcode(data, imgFn):
     img = qr.make_image()
     #设置二维码为彩色
     img = img.convert("RGBA")
-    icon = Image.open(imgFn)
+    icon = Image.open(img_fn)
     w, h = img.size
     factor = 4
     size_w = int(w / factor)

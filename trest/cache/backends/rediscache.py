@@ -68,10 +68,9 @@ class CacheConnectionPool(object):
     def __init__(self):
         self._connection_pools = {}
 
-    def get_connection_pool(self, host='127.0.0.1', port=6379, db=1,
-                            password=None, parser_class=None,
-                            unix_socket_path=None, connection_pool_class=None,
-                            connection_pool_class_kwargs=None):
+    def get_connection_pool(self, host, port, db, password = None, parser_class = None, unix_socket_path = None, connection_pool_class = None, connection_pool_class_kwargs = None):
+        port = port if port else 6379
+        db = db if db else 1
         connection_identifier = (host, port, db, parser_class, unix_socket_path, connection_pool_class)
         if not self._connection_pools.get(connection_identifier):
             connection_class = (
@@ -142,7 +141,7 @@ class RedisClient(CacheClient):
 
     @property
     def server(self):
-        return self._server or "127.0.0.1:6379"
+        return self._server
 
     @property
     def params(self):

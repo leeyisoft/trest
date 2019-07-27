@@ -3,7 +3,6 @@
 import logging
 import logging.handlers
 from tornado.log import LogFormatter
-from .loggers import ProcessLogTimedFileHandler
 from .client import SysLogger, syslogger
 
 

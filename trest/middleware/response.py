@@ -41,5 +41,4 @@ class PushToMQMiddleware(object):
                 option['auto_delete'] = False
                 push_to_mq(param, option)
             except Exception as e:
-                # raise e
                 pass

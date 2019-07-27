@@ -41,7 +41,7 @@ email = {
 sentry_url = ''
 rabbitmq_config = ''
 redis_config = {}
-# ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
 if hasattr(options, 'ROOT_PATH') and os.path.exists(options.ROOT_PATH):
     ROOT_PATH = options.ROOT_PATH
 else:
@@ -87,22 +87,9 @@ TORNADO_CONF = {
 MIDDLEWARE_CLASSES = (
     'trest.middleware.dbalchemy.DBAlchemyMiddleware',
     'trest.middleware.AccessLogMiddleware',
-    'trest.middleware.PeriodicCallbackMiddleware',
     'trest.middleware.PushToMQMiddleware',
     # 'tornado.httpmodule.httpmodule.HttpModuleMiddleware',
 )
-
-# 定时任务之定期调用，执行定时任务需要首先加载 middleware.PeriodicCallbackMiddleware
-CRONTAB_PeriodicCallback = [
-    # (
-    #     'trest.models.PeriodicCallbackDemo',
-    #     'demo_test',
-    #     # 参数必须是一个 dict
-    #     {'user_id': ''},
-    #     # 每隔 1800000 毫秒(30分钟)执行一次
-    #     1800000,
-    # ),
-]
 
 INSTALLED_APPS = (
     'admin',
@@ -118,6 +105,7 @@ ROUTE_MODULES = {
 ###########
 # 缓存配置 #
 ###########
+_default_redis_location = '127.0.0.1:6379'
 CACHES = {
     'default': {
         'BACKEND': 'trest.cache.backends.localcache.LocMemCache',
@@ -129,10 +117,10 @@ CACHES = {
     },
     'default_redis': {
         'BACKEND': 'trest.cache.backends.rediscache.RedisCache',
-        'LOCATION': '127.0.0.1:6379',
+        'LOCATION': _default_redis_location,
         'OPTIONS': {
-            'DB': 3,
-            'PASSWORD': 'abc123456',
+            'DB': 0,
+            'PASSWORD': '',
             'PARSER_CLASS': 'redis.connection.DefaultParser',
             'POOL_KWARGS': {
                 'socket_timeout': 2,
@@ -175,14 +163,6 @@ TRANSLATIONS_CONF = {
     'locale_default': 'zh_CN',
     'use_accept_language': True
 }
-
-# 白名单未开启，如需使用，请用元祖列出白名单ip
-WHITELIST = False
-#######
-# WHITELIST = (
-#     '127.0.0.1',
-# '127.0.0.2',
-# )
 
 # tornado日志功能配置
 # Logging中有

@@ -35,7 +35,5 @@ setup(
         'raven',
         'pika',
         'pillow',
-        'qrcode',
-        'oss2',
     ],
 )

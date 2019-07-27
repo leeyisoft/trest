@@ -69,22 +69,3 @@ class Publisher:
         parameters = pika.ConnectionParameters(self.config['host'], self.config['port'],
                                                self.config['virtual_host'], credentials, ssl=False)
         return pika.BlockingConnection(parameters)
-
-def _main():
-
-    rabbitmq_config = 'amqp://dev:123456@192.168.0.21:5672/%2fdev'
-    pusher = Publisher(rabbitmq_config)
-    # msg = "abcdefg"
-    msg = {'dd':333}
-    option = {}
-    option['exchange'] = 'async_ex.push_msg'
-    option['routing_key'] = 'async_rtk.push_msg'
-    option['queue_name'] = 'async_q.push_msg'
-    option['durable'] = True
-    option['auto_delete'] = False
-    option['exchange_type'] = 'topic'
-    res = pusher.push(msg, option)
-    print(res)
-
-if __name__ == '__main__':
-    _main()
