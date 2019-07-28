@@ -13,6 +13,7 @@ from .exception import JsonError
 from .utils.encrypter import RSAEncrypter
 from .settings_manager import settings
 from .handler import BaseHandler
+from .utils.func import md5
 
 
 def get_modules(package="."):
@@ -34,7 +35,7 @@ async def get_handlers(app_name):
     modules = get_modules(namespace)
     # 将包下的所有模块，逐个导入，并调用其中的函数
     package = f'applications.{app_name}.handlers'
-    handlers = []
+    handlers = {}
     for module in modules:
         if not module:
             continue
@@ -44,23 +45,28 @@ async def get_handlers(app_name):
             module = importlib.import_module(module, package)
         except Exception as e:
             continue
-
         for attr in dir(module):
             if attr.startswith('_'):
                 continue
             if not attr.endswith('Handler'):
                 continue
-            hander = getattr(module, attr)
-            params = inspect.getmembers(hander, lambda f: callable(f) and hasattr(f, '_path'))
+            handler = getattr(module, attr)
+            params = inspect.getmembers(handler, lambda f: callable(f) and hasattr(f, '_path'))
             for name, val in params:
                 path = val._path if val._path.startswith('/') else rf'/{app_name}/{val._path}'
+                path_md5 = val._path_md5
                 method = val._method.lower()
-                NewClass = type(name, (hander,), {})
-                setattr(NewClass, method, val)
-                handlers.append((path, NewClass))
+                if len(handlers.keys())==0 or path_md5 in handlers.keys():
+                    handler2 = handler
+                else:
+                    handler2 = type(path_md5, (handler,), {})
+                # endif
+                setattr(handler2, method, val)
+                # print('handler2', method, name, path, path_md5, handler2, len(handlers.keys()), path_md5 in handlers.keys())
+                handlers[path_md5] = (path, handler2)
         # endfor
     # endfor
-    return handlers
+    return list(handlers.values())
 
 def get(*dargs, **dkargs):
     """
@@ -71,6 +77,7 @@ def get(*dargs, **dkargs):
         def _wrapper(*args, **kargs):
             return method(*args, **kargs)
         _wrapper._path = path
+        _wrapper._path_md5 = md5(path)
         _wrapper._method = 'get'
         return _wrapper
     return wrapper
@@ -84,6 +91,7 @@ def post(*dargs, **dkargs):
         def _wrapper(*args, **kargs):
             return method(*args, **kargs)
         _wrapper._path = path
+        _wrapper._path_md5 = md5(path)
         _wrapper._method = 'post'
         return _wrapper
     return wrapper
@@ -97,7 +105,22 @@ def put(*dargs, **dkargs):
         def _wrapper(*args, **kargs):
             return method(*args, **kargs)
         _wrapper._path = path
+        _wrapper._path_md5 = md5(path)
         _wrapper._method = 'put'
+        return _wrapper
+    return wrapper
+
+def head(*dargs, **dkargs):
+    """
+    """
+    def wrapper(method):
+        path = dargs[0]
+        @functools.wraps(method)
+        def _wrapper(*args, **kargs):
+            return method(*args, **kargs)
+        _wrapper._path = path
+        _wrapper._path_md5 = md5(path)
+        _wrapper._method = 'head'
         return _wrapper
     return wrapper
 
@@ -110,6 +133,7 @@ def delete(*dargs, **dkargs):
         def _wrapper(*args, **kargs):
             return method(*args, **kargs)
         _wrapper._path = path
+        _wrapper._path_md5 = md5(path)
         _wrapper._method = 'delete'
         return _wrapper
     return wrapper

@@ -46,7 +46,7 @@ class Model(MetaBaseModel):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def as_dict(self, fields):
+    def as_dict(self, fields = []):
         """ 模型转换为字典 """
         items = {}
         for column in self.__table__.columns:
