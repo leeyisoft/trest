@@ -81,8 +81,17 @@ class BaseHandler(SentryMixin, tornado.web.RequestHandler):
 
 class ErrorHandler(BaseHandler):
 
+    def _autoload_html(self, uri_li):
+        uri_li = [i for i in uri_li if i]
+        tmpl = '/' . join(uri_li[1:])
+        params = {}
+        self.render(tmpl, **params)
+
     def prepare(self):
         super(ErrorHandler, self).prepare()
+        uri_li = self.request.uri.split('?', 1)[0].split('/')
+        if uri_li[-1].endswith('.html'):
+            return self._autoload_html(uri_li)
         raise Http404()
 
 

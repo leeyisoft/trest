@@ -8,12 +8,12 @@ import functools
 
 from tornado.util import import_object
 from tornado.web import RequestHandler
+from .utils.func import md5
 
 from .exception import JsonError
 from .utils.encrypter import RSAEncrypter
 from .settings_manager import settings
 from .handler import BaseHandler
-from .utils.func import md5
 
 
 def get_modules(package="."):
@@ -35,7 +35,8 @@ async def get_handlers(app_name):
     modules = get_modules(namespace)
     # 将包下的所有模块，逐个导入，并调用其中的函数
     package = f'applications.{app_name}.handlers'
-    handlers = {}
+    handlers = []
+    not_get = ['post', 'delete', 'put', 'patch']
     for module in modules:
         if not module:
             continue
@@ -52,21 +53,31 @@ async def get_handlers(app_name):
                 continue
             handler = getattr(module, attr)
             params = inspect.getmembers(handler, lambda f: callable(f) and hasattr(f, '_path'))
+            temp_dict = {}
             for name, val in params:
                 path = val._path if val._path.startswith('/') else rf'/{app_name}/{val._path}'
-                path_md5 = val._path_md5
                 method = val._method.lower()
-                if len(handlers.keys())==0 or path_md5 in handlers.keys():
-                    handler2 = handler
+                if path not in temp_dict.keys():
+                    temp_dict[path] = {}
+                temp_dict[path][method] = (path, val, name)
+            # end for
+            if not temp_dict:
+                continue
+            for (key, dt2) in temp_dict.items():
+                intersection = set(not_get) & set(dt2.keys())
+                if not intersection :
+                    NewClass = type(f"Handler{md5(key)}", (handler,), {})
                 else:
-                    handler2 = type(path_md5, (handler,), {})
-                # endif
-                setattr(handler2, method, val)
-                # print('handler2', method, name, path, path_md5, handler2, len(handlers.keys()), path_md5 in handlers.keys())
-                handlers[path_md5] = (path, handler2)
+                    NewClass = handler
+                # end if
+                for (method2, (path2, val2, name2)) in dt2.items():
+                    setattr(NewClass, method2, val2)
+                handlers.append((key, NewClass,))
+                print('key ', key, path2, NewClass)
+            # endfor
         # endfor
     # endfor
-    return list(handlers.values())
+    return handlers
 
 def get(*dargs, **dkargs):
     """
@@ -77,7 +88,6 @@ def get(*dargs, **dkargs):
         def _wrapper(*args, **kargs):
             return method(*args, **kargs)
         _wrapper._path = path
-        _wrapper._path_md5 = md5(path)
         _wrapper._method = 'get'
         return _wrapper
     return wrapper
@@ -91,7 +101,6 @@ def post(*dargs, **dkargs):
         def _wrapper(*args, **kargs):
             return method(*args, **kargs)
         _wrapper._path = path
-        _wrapper._path_md5 = md5(path)
         _wrapper._method = 'post'
         return _wrapper
     return wrapper
@@ -105,7 +114,6 @@ def put(*dargs, **dkargs):
         def _wrapper(*args, **kargs):
             return method(*args, **kargs)
         _wrapper._path = path
-        _wrapper._path_md5 = md5(path)
         _wrapper._method = 'put'
         return _wrapper
     return wrapper
@@ -119,7 +127,6 @@ def head(*dargs, **dkargs):
         def _wrapper(*args, **kargs):
             return method(*args, **kargs)
         _wrapper._path = path
-        _wrapper._path_md5 = md5(path)
         _wrapper._method = 'head'
         return _wrapper
     return wrapper
@@ -133,7 +140,6 @@ def delete(*dargs, **dkargs):
         def _wrapper(*args, **kargs):
             return method(*args, **kargs)
         _wrapper._path = path
-        _wrapper._path_md5 = md5(path)
         _wrapper._method = 'delete'
         return _wrapper
     return wrapper
