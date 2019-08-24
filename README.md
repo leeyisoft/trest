@@ -5,8 +5,7 @@
 #### 介绍
 基于Tornado结合asyncio的web mvc框架
 
-* 支持AMQP
-*
+依赖 Tornado SQLAlchemy pycryptodome pytz 等
 
 #### 软件架构
 软件架构说明

@@ -16,7 +16,6 @@ from .settings_manager import settings
 from .exception import Http404
 from .exception import JsonError
 from .cache import close_caches
-from .utils import sys_config
 
 
 class BaseHandler(SentryMixin, tornado.web.RequestHandler):
@@ -53,7 +52,6 @@ class BaseHandler(SentryMixin, tornado.web.RequestHandler):
         to `render` or `render_string`.
         """
         namespace = dict(
-            sys_config=sys_config,
             lang=self.get_argument('lang', None),
 
             handler=self,

@@ -7,7 +7,6 @@ import mimetypes
 import tornado.httputil
 
 from ..settings_manager import settings
-from .image import download_img
 
 
 class Uploader():
@@ -42,7 +41,6 @@ class Uploader():
 
 class FileUtil(object):
     """docstring for FileUtil"""
-
     @staticmethod
     def file_name(fname):
         return fname.split("/")[-1]

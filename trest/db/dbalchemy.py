@@ -247,8 +247,11 @@ class SQLAlchemy(ConnBase):
         :param others_url: 其他类型，暂未实现
         :param kwargs: 自定义配置
         """
-        super(SQLAlchemy, self).__init__(config=config, master_url=master_url, slaves_url=slaves_url,
-                                         session_conf=session_conf, **kwargs)
+        super(SQLAlchemy, self).__init__(config=config,
+            master_url=master_url,
+            slaves_url=slaves_url,
+            session_conf=session_conf,
+            **kwargs)
         # 每一个engine都会有一个factory，感觉挺闹心，要是有10个engine。。就得10个factory，未来寻找一下全局只有一个factory的方案
         self._slave_tmp = None
         session_conf['query_cls'] = BaseQuery

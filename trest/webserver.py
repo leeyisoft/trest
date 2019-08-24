@@ -97,15 +97,6 @@ class Server(object):
             handlers = self.ioloop.run_until_complete(
                 get_handlers(app_name)
             )
-            obj_str = f'applications.{app_name}.urls.urls'
-            urls = import_object(obj_str)
-            for url_obj in urls:
-                if type(url_obj)==tuple and (not url_obj[0].startswith('/')):
-                    u2 = list(url_obj)
-                    u2[0] = rf'/{app_name}/{url_obj[0]}'
-                    url_obj = tuple(u2)
-                handlers.append(url_obj)
-            # endfor
             app = self._install_application(handlers)
             rules.append(Rule(PathMatches('/.*'), app))
         # endfor
@@ -231,3 +222,4 @@ def run(sockets=None, **kwargs):
     server.start_time = start_time
     server.load_all(sockets, **kwargs)
     server.start()
+    return server

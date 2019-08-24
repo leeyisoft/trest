@@ -16,7 +16,6 @@ import re
 import requests
 
 from ..logger import SysLogger
-from ..db import mysqldb
 from ..settings_manager import settings
 
 from . import utime
@@ -191,19 +190,3 @@ def sha256_sign(val):
 def sha256_verify_sign(sign, val):
     SysLogger.debug('sha256_sign(val): ' + sha256_sign(val))
     return True if sha256_sign(val)==sign else False
-
-
-def option_change(options):
-    """
-    选项字典转数组
-    :param options:
-    :return:
-    """
-    list = []
-    for key in options:
-        item = {}
-        item['key'] = key
-        item['value'] = key
-        item['label'] = options[key]
-        list.append(item)
-    return list

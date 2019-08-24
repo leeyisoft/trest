@@ -33,6 +33,7 @@ async def get_handlers(app_name):
     """ 自动加载特定APP里面的handler """
     namespace = f'{settings.ROOT_PATH}/applications/{app_name}/handlers/'
     modules = get_modules(namespace)
+    # print('modules ', type(modules), modules)
     # 将包下的所有模块，逐个导入，并调用其中的函数
     package = f'applications.{app_name}.handlers'
     handlers = []
@@ -44,39 +45,52 @@ async def get_handlers(app_name):
             continue
         try:
             module = importlib.import_module(module, package)
+            # print('module ', type(module), module)
         except Exception as e:
-            continue
+            raise e
         for attr in dir(module):
             if attr.startswith('_'):
                 continue
             if not attr.endswith('Handler'):
                 continue
+            if attr in ['BaseHandler', 'CommonHandler']:
+                continue
             handler = getattr(module, attr)
+            # print('handler dir ', handler, dir(handler))
             params = inspect.getmembers(handler, lambda f: callable(f) and hasattr(f, '_path'))
+            if not params:
+                continue
+            # print('params ', handler, len(params), params)
             temp_dict = {}
+            method_path_set = set()
             for name, val in params:
                 path = val._path if val._path.startswith('/') else rf'/{app_name}/{val._path}'
                 method = val._method.lower()
                 if path not in temp_dict.keys():
                     temp_dict[path] = {}
+                method_path = f'{method}:{path}'
+                # print('method_path', method_path in method_path_set, method_path, method_path_set)
+                if method_path in method_path_set:
+                    raise Exception(f'api repeated {method_path}')
                 temp_dict[path][method] = (path, val, name)
+                method_path_set.add(method_path)
             # end for
-            if not temp_dict:
-                continue
             for (key, dt2) in temp_dict.items():
                 intersection = set(not_get) & set(dt2.keys())
                 if not intersection :
                     NewClass = type(f"Handler{md5(key)}", (handler,), {})
+                    NewClass.__module__ = package
                 else:
                     NewClass = handler
                 # end if
                 for (method2, (path2, val2, name2)) in dt2.items():
                     setattr(NewClass, method2, val2)
-                handlers.append((key, NewClass,))
-                print('key ', key, path2, NewClass)
+                handlers.append((key, NewClass, {name:name2}))
+                # print('key ', key, method2, path2, NewClass)
             # endfor
         # endfor
     # endfor
+    # print('handlers ', type(handlers), handlers)
     return handlers
 
 def get(*dargs, **dkargs):

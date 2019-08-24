@@ -45,7 +45,7 @@ redis_config = {}
 if hasattr(options, 'ROOT_PATH') and os.path.exists(options.ROOT_PATH):
     ROOT_PATH = options.ROOT_PATH
 else:
-    raise ConfigError('请配置 ROOT_PATH')
+    raise ConfigError('ROOT_PATH is not configured')
 
 STATIC_PATH = os.path.join(ROOT_PATH, 'statics')
 TEMPLATE_PATH = os.path.join(ROOT_PATH, 'applications/admin/templates')
@@ -88,7 +88,6 @@ MIDDLEWARE_CLASSES = (
     'trest.middleware.dbalchemy.DBAlchemyMiddleware',
     'trest.middleware.AccessLogMiddleware',
     'trest.middleware.PushToMQMiddleware',
-    # 'tornado.httpmodule.httpmodule.HttpModuleMiddleware',
 )
 
 INSTALLED_APPS = (
@@ -169,7 +168,7 @@ TRANSLATIONS_CONF = {
 # NOTSET < DEBUG < INFO < WARNING < ERROR < CRITICAL 这几种级别，
 # 日志会记录设置级别以上的日志
 # when  时间  按照哪种时间单位滚动（可选s-按秒，m-按分钟，h-按小时，d-按天，w0-w6-按指定的星期几，midnight-在午夜）
-LOGGING_DIR = 'logs/'
+LOGGING_DIR = os.path.join(ROOT_PATH, 'logs/')
 
 #其中name为getlogger指定的名字
 standard_format = '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(filename)s:%(lineno)d]' \

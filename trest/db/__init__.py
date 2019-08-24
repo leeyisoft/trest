@@ -63,17 +63,3 @@ class Model(MetaBaseModel):
             else :
                 items[column.name] = val
         return items
-
-#指定decode_responses为True，表示输出为字符串
-_default_redis_host = '127.0.0.1'
-redisdb = redis.StrictRedis(
-    host = settings.redis_config.get('host', _default_redis_host),
-    port = settings.redis_config.get('port', 6379),
-    password = settings.redis_config.get('password', ''),
-    charset = settings.redis_config.get('charset', 'utf-8'),
-    db = settings.redis_config.get('db', 0),
-    decode_responses=True)
-
-def mysqldb(dbt='master'):
-    sess = Connector.get_session()
-    return sess.get(dbt, False)

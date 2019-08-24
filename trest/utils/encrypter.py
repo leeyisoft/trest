@@ -194,36 +194,3 @@ def aes_encrypt(plaintext, secret=None, prefix='aes:::'):
     cipher = AESEncrypter(secret)
     encrypted = cipher.encrypt(plaintext)
     return '%s%s' % (prefix, encrypted)
-
-if __name__ == "__main__":
-    try:
-        # for RSA test
-        ciphertext = 'Qa2EU2EF4Eq4w75TnA1IUw+ir9l/nSdW3pMV+a6FkzV9bld259DxM1M4RxYkpPaVXhQFol04yFjuxzkRg12e76i6pkDM1itQSOy5hwmrud5PQvfnBf7OmHpOpS6oh6OQo72CA0LEzas+OANmRXKfn5CMN14GsmfWAn/F6j4Azhs='
-        public_key = '/Users/leeyi/workspace/joywin_staff/joywin_staff_api/datas/public.pem'
-        private_key = '/Users/leeyi/workspace/joywin_staff/joywin_staff_api/datas/private.pem'
-
-        ciphertext = RSAEncrypter.encrypt('admin888中国', public_key)
-        print("ciphertext: ", ciphertext)
-        plaintext = RSAEncrypter.decrypt(ciphertext, private_key)
-        print("plaintext: ", type(plaintext))
-        print("plaintext: ", plaintext)
-
-
-        # for AES test
-        key = 'abc20304050607081q2w3e4r*1K|j!ta'
-        cipher = AESEncrypter(key)
-
-        plaintext = '542#1504'
-        encrypted = cipher.encrypt(plaintext)
-        print('Encrypted: %s' % encrypted)
-        ciphertext = 'EPLtushldq9E1U8vG/sL3g=='
-        assert encrypted == ciphertext
-
-        plaintext = '542#1504你好'
-        encrypted = '+YGDvnakKi77SBD6GXmThw=='
-        decrypted = cipher.decrypt(encrypted)
-        print('Decrypted: %s' % decrypted)
-        assert decrypted == plaintext
-
-    except KeyboardInterrupt:
-        sys.exit(0)
