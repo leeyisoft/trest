@@ -15,8 +15,6 @@ from sqlalchemy.pool import Pool
 from ..logger import SysLogger
 from ..settings_manager import settings
 
-connection = Connector.conn_pool
-
 
 def connection_event():
     @event.listens_for(Pool, "checkout")
@@ -40,13 +38,21 @@ def ping_db(conn_, ping_inteval):
     PeriodicCallback(ping_func, ping_inteval * 1000).start()
 
 class DBAlchemyMiddleware(object):
+    connection = {}
     def process_init(self, application):
-        if settings.PING_DB:
+        configed_db = False
+        try:
+            configed_db = settings.DATABASE_CONNECTION['default']['connections'][0]['HOST']
+            configed_db = True if configed_db else False
+        except Exception as e:
+            pass
+        if settings.PING_DB and configed_db:
+            self.connection = Connector.conn_pool
             connection_event()
             # 定时ping数据库，防止mysql go away，定时检测防丢
             interval = settings.PING_DB
             if interval > 0:
-                for k, conn in connection.items():
+                for k, conn in self.connection.items():
                     ping_db(conn, interval)
 
     def process_response(self, handler, clear, chunk):
@@ -59,6 +65,6 @@ class DBAlchemyMiddleware(object):
         pass
 
     def process_endcall(self, handler, clear):
-        for k, conn in connection.items():
+        for k, conn in self.connection.items():
             if hasattr(conn, 'remove'):
                 callable(conn.remove) and conn.remove()
