@@ -56,7 +56,6 @@ async def get_handlers(app_name):
             if attr in ['BaseHandler', 'CommonHandler']:
                 continue
             handler = getattr(module, attr)
-            # print('handler dir ', handler, dir(handler))
             params = inspect.getmembers(handler, lambda f: callable(f) and hasattr(f, '_path'))
             if not params:
                 continue

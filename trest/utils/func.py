@@ -18,7 +18,6 @@ import requests
 from ..logger import SysLogger
 from ..settings_manager import settings
 
-from . import utime
 from .sendmail import sendmail
 
 

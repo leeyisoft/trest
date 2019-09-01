@@ -51,23 +51,9 @@ class BaseHandler(SentryMixin, tornado.web.RequestHandler):
         defaults in the `tornado.template` module and keyword arguments
         to `render` or `render_string`.
         """
-        namespace = dict(
-            lang=self.get_argument('lang', None),
-
-            handler=self,
-            request=self.request,
-            current_user=self.current_user,
-            locale=self.locale,
-            _=self.locale.translate,
-            pgettext=self.locale.pgettext,
-            static_url=self.static_url,
-            xsrf_form_html=self.xsrf_form_html,
-            reverse_url=self.reverse_url
-        )
-        if self.ui:
-            namespace.update(self.ui)
+        namespace = super().get_template_namespace()
+        namespace['lang'] = self.get_argument('lang', None)
         return namespace
-
 
     def error(self, msg='error', code=1, **args):
         self.set_status(200, msg)

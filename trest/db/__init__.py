@@ -52,8 +52,6 @@ class Model(MetaBaseModel):
         for column in self.__table__.columns:
             val = getattr(self, column.name)
             val = '' if val is None else val
-            if column.name.endswith('_at'):
-                items['dt_%s'%column.name] = utime.ts_to_str(int(val), to_tz=None) if val else ''
             datetime_tuple = (datetime.datetime, datetime.date, Decimal)
             if isinstance(val, datetime_tuple):
                 val = str(val)

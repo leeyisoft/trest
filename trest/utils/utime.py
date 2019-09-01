@@ -16,11 +16,16 @@ except Exception as e:
     pass
 
 
-def timestamp():
+def timestamp(precision = 0):
     """
-    获取Unix时间戳，以GMT/UTC时间「1970-01-01T00:00:00」为起点，到具体时间的秒数，不考虑闰秒。
+    获取Unix时间戳，以GMT/UTC时间「1970-01-01T00:00:00.000000」为起点，到具体时间的秒数，不考虑闰秒。
+    Keyword Arguments:
+        precision numeric -- 返回的时间的精度，获取毫秒用 timestamp(3) (default: {0})
+
+    Returns:
+        float -- 获取的UTC时间
     """
-    return time.time()
+    return time.time() * 10**precision
 
 def dt_now(to_tz='UTC'):
     """获取当前时间，默认为UTC时间
