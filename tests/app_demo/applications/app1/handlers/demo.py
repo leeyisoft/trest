@@ -4,25 +4,25 @@
 
 [description]
 """
-from trest.exception import JsonError
-from trest.router import delete
-from trest.router import post
-from trest.router import get
 from trest.router import put
-from trest.handler import BaseHandler
+from trest.router import get
+from trest.router import post
+from trest.router import delete
+from trest.handler import Handler
+from trest.exception import JsonError
 
 
-class DemoHandler(BaseHandler):
+class DemoHandler(Handler):
     @post('demo0')
     def add(self):
         return self.success(data = ['post', 'demo0'])
 
-class Demo1Handler(BaseHandler):
+class Demo1Handler(Handler):
     @post('demo1')
     def add(self):
         return self.success(data = ['post', 'demo1'])
 
-class Demo2Handler(BaseHandler):
+class Demo2Handler(Handler):
     @get('demo2')
     def get_demo2(self):
         return self.success(data = ['get', 'demo2', ])

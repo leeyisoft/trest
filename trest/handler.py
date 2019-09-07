@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 base handler
-要获得中间件等特性需继承BaseHandler
+要获得中间件等特性需继承Handler
 """
 
 import tornado.locale
@@ -10,15 +10,13 @@ import tornado.web
 from tornado.escape import xhtml_escape
 from tornado.escape import json_encode
 from raven.contrib.tornado import SentryMixin
-from typing import Any
 
 from .settings_manager import settings
 from .exception import Http404
 from .exception import JsonError
-from .cache import close_caches
 
 
-class BaseHandler(SentryMixin, tornado.web.RequestHandler):
+class Handler(SentryMixin, tornado.web.RequestHandler):
     response_to_mq = False
 
     def get_user_locale(self):
@@ -63,7 +61,7 @@ class BaseHandler(SentryMixin, tornado.web.RequestHandler):
         self.set_status(200, msg)
         raise JsonError(code=0, msg=msg, **args)
 
-class ErrorHandler(BaseHandler):
+class ErrorHandler(Handler):
 
     def _autoload_html(self, uri_li):
         uri_li = [i for i in uri_li if i]
@@ -82,4 +80,4 @@ class ErrorHandler(BaseHandler):
 if settings.MIDDLEWARE_CLASSES:
     from .mixins.middleware import MiddlewareHandlerMixin
 
-    BaseHandler.__bases__ = (MiddlewareHandlerMixin,) + BaseHandler.__bases__
+    Handler.__bases__ = (MiddlewareHandlerMixin,) + Handler.__bases__

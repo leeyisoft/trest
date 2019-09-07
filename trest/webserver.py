@@ -30,7 +30,6 @@ from .exception import ArgumentError
 from .application import Application
 from .settings_manager import settings
 from .logger import enable_pretty_logging
-from .handler import BaseHandler
 from .router import get_handlers
 
 import importlib
@@ -64,7 +63,6 @@ class Server(object):
 
         tornado_conf['debug'] = settings.debug
         tornado_conf['xsrf_cookies'] = settings.xsrf_cookies
-        # print(tornado_conf)
         return tornado_conf
 
     def _install_application(self, handlers):
@@ -94,9 +92,7 @@ class Server(object):
             raise ConfigError('settings.INSTALLED_APPS is empty')
         rules = []
         for app_name in apps:
-            handlers = self.ioloop.run_until_complete(
-                get_handlers(app_name)
-            )
+            handlers = get_handlers(app_name)
             app = self._install_application(handlers)
             rules.append(Rule(PathMatches('/.*'), app))
         # endfor

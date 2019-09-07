@@ -68,10 +68,8 @@ class CacheConnectionPool(object):
     def __init__(self):
         self._connection_pools = {}
 
-    def get_connection_pool(self, host, port, db, password = None, parser_class = None, unix_socket_path = None, connection_pool_class = None, connection_pool_class_kwargs = None):
-        port = port if port else 6379
-        db = db if db else 1
-        connection_identifier = (host, port, db, parser_class, unix_socket_path, connection_pool_class)
+    def _get_connection_pool(self, connection_identifier, connection_pool_class_kwargs = None):
+        (host, port, db, password, parser_class, unix_socket_path, connection_pool_class) = connection_identifier
         if not self._connection_pools.get(connection_identifier):
             connection_class = (
                 unix_socket_path and UnixDomainSocketConnection or Connection
@@ -127,12 +125,10 @@ class RedisClient(CacheClient):
             'port': port,
             'unix_socket_path': unix_socket_path,
         }
-
-        connection_pool = pool.get_connection_pool(
-            parser_class=self.parser_class,
-            connection_pool_class=self.connection_pool_class,
-            connection_pool_class_kwargs=self.connection_pool_class_kwargs,
-            **kwargs
+        connection_identifier = (host, port, self.db, self.password, self.parser_class, unix_socket_path, self.connection_pool_class)
+        connection_pool = pool._get_connection_pool(
+            connection_identifier = connection_identifier,
+            connection_pool_class_kwargs = self.connection_pool_class_kwargs
         )
         self._client = redis.StrictRedis(
             connection_pool=connection_pool,

@@ -36,11 +36,9 @@ class Model(MetaBaseModel):
     @declared_attr
     def session(cls):
         slave = Connector.get_session(cls.__connection_name__)['slave']
-
         slave.using_master = lambda: \
             Connector.get_session(cls.__connection_name__)['master']
         return slave
-
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
@@ -49,11 +47,11 @@ class Model(MetaBaseModel):
     def as_dict(self, fields = []):
         """ 模型转换为字典 """
         items = {}
+        _no_str_tuple = (datetime.datetime, datetime.date, Decimal)
         for column in self.__table__.columns:
             val = getattr(self, column.name)
             val = '' if val is None else val
-            datetime_tuple = (datetime.datetime, datetime.date, Decimal)
-            if isinstance(val, datetime_tuple):
+            if isinstance(val, _no_str_tuple):
                 val = str(val)
             if type(fields)==list and len(fields)>0:
                 if column.name in fields:
