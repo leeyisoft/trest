@@ -34,6 +34,7 @@ def ping_db(conn_, ping_inteval):
     @coroutine
     def ping_func():
         ping_conn_count = settings.sqlalchemy.get('ping_conn_count', 5)
+        ping_conn_count = int(ping_conn_count)
         yield [conn_.ping_db() for _ in range(ping_conn_count)]
 
     PeriodicCallback(ping_func, ping_inteval * 1000).start()

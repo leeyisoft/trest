@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""广告位控制器
-
+"""
 [description]
 """
 from trest.router import put

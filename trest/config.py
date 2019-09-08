@@ -14,9 +14,8 @@ if hasattr(options, 'ROOT_PATH') and os.path.exists(options.ROOT_PATH):
 else:
     raise ConfigError('ROOT_PATH is not configured')
 
-_dotenv = f'{ROOT_PATH}/.env'
 dcfg = configparser.ConfigParser()
-dcfg.read(_dotenv, encoding='utf8')
+dcfg.read(f'{ROOT_PATH}/.env', encoding='utf8')
 
 env = dcfg.get('sys','TREST_ENV')
 # 检查系统环境变量 TREST_ENV 设置
