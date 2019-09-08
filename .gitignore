@@ -5,3 +5,4 @@ settings.json
 tests/*/logs/*
 tests/*/logs/*.log
 tests/*/logs/*/*.log
+.env

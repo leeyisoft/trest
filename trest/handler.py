@@ -11,7 +11,7 @@ from tornado.escape import xhtml_escape
 from tornado.escape import json_encode
 from raven.contrib.tornado import SentryMixin
 
-from .settings_manager import settings
+from .config import settings
 from .exception import Http404
 from .exception import JsonError
 

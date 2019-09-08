@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 import json
 
+from trest.config import settings
+
 from .publisher import Publisher
 from ..utils import func
-from ..settings_manager import settings
 
 
 def push_message(msg, msg_type='transfer_websocket'):
@@ -53,7 +54,7 @@ def push_to_mq(param, option):
     msg['msg_type'] = option.get('msg_type', '')
     msg['msg_md5'] = func.md5(json.dumps(param))
     msg['msg'] = param
-    pusher = Publisher(settings.rabbitmq_config)
+    pusher = Publisher(settings.sys.rabbitmq_config)
     option['exchange_type'] = option.get('exchange_type', 'topic')
     res = pusher.push(msg, option)
     # print(res)

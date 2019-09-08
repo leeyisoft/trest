@@ -6,7 +6,7 @@ import hashlib
 import mimetypes
 import tornado.httputil
 
-from ..settings_manager import settings
+from trest.config import settings
 
 
 class Uploader():

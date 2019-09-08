@@ -15,8 +15,8 @@ from sqlalchemy.engine import url
 
 from tornado.util import import_object
 
+from trest.config import settings
 from ..logger import SysLogger
-from ..settings_manager import settings
 from ..exception import ConfigError
 from ..storage import storage
 from ..utils.encrypter import aes_decrypt

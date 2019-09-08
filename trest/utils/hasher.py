@@ -11,8 +11,9 @@ import hmac
 
 from tornado.util import import_object
 
+from trest.config import settings
+
 from . import func
-from ..settings_manager import settings
 
 
 UNUSABLE_PASSWORD_PREFIX = '!'  # This will never be a valid encoded hash

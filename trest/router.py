@@ -12,7 +12,7 @@ from .utils.func import md5
 
 from .exception import JsonError
 from .utils.encrypter import RSAEncrypter
-from .settings_manager import settings
+from .config import settings
 from .handler import Handler
 
 
@@ -23,7 +23,7 @@ def _get_modules(package="."):
     modules = []
     files = os.listdir(package)
     for file in files:
-        if file.startswith('_') or file.startswith('.'):
+        if file.startswith(('_', '.')):
             continue
         if not file.endswith('.py'):
             continue

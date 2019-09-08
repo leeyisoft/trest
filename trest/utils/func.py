@@ -4,20 +4,18 @@ import json
 import sys
 from decimal import Decimal
 
-import pytz
-import datetime
+import re
 import time
-import dateutil.parser
-import hashlib
+import uuid
+import pytz
 import hmac
 import random
-import uuid
-import re
+import hashlib
+import datetime
 import requests
+import dateutil.parser
 
 from ..logger import SysLogger
-from ..settings_manager import settings
-
 from .sendmail import sendmail
 
 
@@ -143,19 +141,6 @@ def is_mobile(mobile, region):
         raise Exception(1, '不支持的区域')
     match = re.match(regex, mobile)
     return True if match else False
-
-def region_mobile(mobile, region):
-    """
-    区域手机号码验证
-    """
-    if '-' not in mobile:
-        if region.lower() in settings.region_code:
-            mobile = "%s-%s" % (settings.region_code[region.lower()]['number'], mobile)
-        else:
-            return False
-    if is_mobile(mobile, region):
-        return mobile
-    return False
 
 def is_phone(phone, region='CN'):
     """

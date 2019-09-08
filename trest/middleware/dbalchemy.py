@@ -13,7 +13,7 @@ from sqlalchemy import event
 from sqlalchemy.pool import Pool
 
 from ..logger import SysLogger
-from ..settings_manager import settings
+from trest.config import settings
 
 
 def connection_event():
@@ -33,7 +33,8 @@ def connection_event():
 def ping_db(conn_, ping_inteval):
     @coroutine
     def ping_func():
-        yield [conn_.ping_db() for _ in range(settings.PING_CONN_COUNT if 'PING_CONN_COUNT' in settings else 5)]
+        ping_conn_count = settings.sqlalchemy.get('ping_conn_count', 5)
+        yield [conn_.ping_db() for _ in range(ping_conn_count)]
 
     PeriodicCallback(ping_func, ping_inteval * 1000).start()
 
@@ -46,11 +47,11 @@ class DBAlchemyMiddleware(object):
             configed_db = True if configed_db else False
         except Exception as e:
             pass
-        if settings.PING_DB and configed_db:
+        if settings.sqlalchemy.get('ping_db') and configed_db:
             self.connection = Connector.conn_pool
             connection_event()
             # 定时ping数据库，防止mysql go away，定时检测防丢
-            interval = settings.PING_DB
+            interval = int(settings.sqlalchemy.ping_db)
             if interval > 0:
                 for k, conn in self.connection.items():
                     ping_db(conn, interval)

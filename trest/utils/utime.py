@@ -9,11 +9,7 @@ import pytz
 import time
 import datetime
 import dateutil.parser
-
-try:
-    from ..settings_manager import settings
-except Exception as e:
-    pass
+from trest.config import settings
 
 
 def timestamp(precision = 0):
@@ -32,7 +28,7 @@ def dt_now(to_tz='UTC'):
     Returns:
         datetime.datetime -- 例如 datetime.datetime(2018, 5, 8, 3, 50, 50, 356945, tzinfo=<UTC>)
     """
-    to_tz = settings.TIME_ZONE if to_tz is None else to_tz
+    to_tz = settings.sys.time_zone if to_tz is None else to_tz
     tz = pytz.timezone(to_tz)
     return datetime.datetime.now(tz)
 
@@ -49,7 +45,7 @@ def dt_to_timezone(dt, to_tz='UTC'):
     """
     if not isinstance(dt, datetime.datetime):
         return dt
-    to_tz = settings.TIME_ZONE if to_tz is None else to_tz
+    to_tz = settings.sys.time_zone if to_tz is None else to_tz
     tz = pytz.timezone(to_tz)
     return dt.astimezone(tz)
 
@@ -57,7 +53,7 @@ def ts_to_datetime(ts, to_tz='UTC'):
     """
     ts默认为Unix时间戳，而不是本地时间戳
     """
-    to_tz = settings.TIME_ZONE if to_tz is None else to_tz
+    to_tz = settings.sys.time_zone if to_tz is None else to_tz
     dt = datetime.datetime.fromtimestamp(ts)
     return dt_to_timezone(dt, to_tz)
 
@@ -67,7 +63,7 @@ def ts_to_str(ts, fmt=None, to_tz='UTC'):
     fmt='%Y-%m-%d %H-%M-%S %Z' '2019-04-16 07-06-24 UTC'
     fmt=None '2019-04-16 07:06:24+00:00
     """
-    to_tz = settings.TIME_ZONE if to_tz is None else to_tz
+    to_tz = settings.sys.time_zone if to_tz is None else to_tz
     dt = ts_to_datetime(ts, to_tz)
     return str(dt) if fmt is None else dt.strftime(fmt)
 
@@ -75,7 +71,7 @@ def datetime_to_ts(dt, to_tz='UTC'):
     """
     datetime转换为时间戳，默认转换为Unix时间戳
     """
-    to_tz = settings.TIME_ZONE if to_tz is None else to_tz
+    to_tz = settings.sys.time_zone if to_tz is None else to_tz
     dt2 = dt_to_timezone(dt, to_tz)
     return dt2.timestamp()
 
@@ -96,7 +92,7 @@ def str_to_datetime(dt_str, to_tz='UTC'):
     Returns:
         [datetime.datetime] -- [description]
     """
-    to_tz = settings.TIME_ZONE if to_tz is None else to_tz
+    to_tz = settings.sys.time_zone if to_tz is None else to_tz
     tz = pytz.timezone(to_tz)
     dt = dateutil.parser.parse(dt_str)
     dt = dt.astimezone(tz)

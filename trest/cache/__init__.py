@@ -6,9 +6,9 @@ from threading import local
 from tornado.util import import_object
 from tornado.ioloop import PeriodicCallback
 
-from ..exception import ConfigError
-from ..settings_manager import settings
+from trest.config import settings
 
+from ..exception import ConfigError
 from .backends.base import InvalidCacheBackendError
 from .backends.base import CacheKeyWarning
 from .backends.base import BaseCache

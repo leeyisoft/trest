@@ -6,9 +6,9 @@
 """
 from tornado import gen
 
-from ..amqp import push_to_mq
+from trest.config import settings
 
-from ..settings_manager import settings
+from ..amqp import push_to_mq
 
 
 class PushToMQMiddleware(object):
@@ -21,8 +21,7 @@ class PushToMQMiddleware(object):
         响应内容，chunk为携带响内容的list，你不可以直接对chunk赋值，
         可以通过chunk[index]来改写响应内容，或再次执行handler.write()
         """
-        # print('process_response', settings.rabbitmq_config and handler.response_to_mq, handler.response_to_mq,  settings.rabbitmq_config)
-        if settings.rabbitmq_config and handler.response_to_mq:
+        if settings.sys.get('rabbitmq_config', None) and handler.response_to_mq:
             data = handler.request.arguments
             # print('chunk', type(chunk), chunk)
             try:

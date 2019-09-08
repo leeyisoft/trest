@@ -1,19 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
 import copy
-import sys
-
-from threading import local as threadlocal
-
-
-try:
-    set
-except NameError:
-    from sets import Set as set
-
-PY3 = (sys.version_info >= (3,))
+import warnings
 
 
 class Storage(dict):

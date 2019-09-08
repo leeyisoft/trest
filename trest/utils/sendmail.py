@@ -10,7 +10,7 @@ from email.utils import parseaddr
 from email.utils import formataddr
 from email.header import Header
 
-from ..settings_manager import settings
+from trest.config import settings
 
 
 def _format_addr(s):

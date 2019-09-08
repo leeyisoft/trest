@@ -13,7 +13,6 @@ from trest.utils import utime
 from .dbalchemy import Connector
 from .dbalchemy import Query
 
-from ..settings_manager import settings
 
 
 MetaBaseModel = declarative_base()

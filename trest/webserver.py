@@ -28,7 +28,7 @@ from .exception import JsonError
 from .exception import ConfigError
 from .exception import ArgumentError
 from .application import Application
-from .settings_manager import settings
+from .config import settings
 from .logger import enable_pretty_logging
 from .router import get_handlers
 
@@ -73,14 +73,14 @@ class Server(object):
              middlewares=settings.MIDDLEWARE_CLASSES,
              **tornado_conf)
         app_obj.sentry_client = AsyncSentryClient(
-            settings.sentry_url
+            settings.sys.get('sentry_url', '')
         )
         return app_obj
 
     def _load_application(self):
         """
         """
-        if settings.TRANSLATIONS:
+        if settings.translation:
             try:
                 from tornado import locale
                 locale.load_translations(settings.TRANSLATIONS_CONF.translations_dir)
@@ -130,7 +130,7 @@ class Server(object):
     def _print_settings_info(self):
         if settings.debug:
             print('tornado version: %s' % tornado.version)
-            print('locale support: %s' % settings.TRANSLATIONS)
+            print('locale support: %s' % settings.sys.get('translation', False))
             print('load apps:')
             for app in settings.INSTALLED_APPS:
                 print(' - %s' % str(app))
@@ -199,10 +199,11 @@ class Server(object):
                            help="The mode of rotating files(time or size)")
         except:
             pass
-        default_ip = '0.0.0.0'
-        options.define("port", default=5080, help="run server on it", type=int)
+
+        address = settings.sys.arbitrary_ip
+        options.define("port", default=settings.sys.port, help="run server on it", type=int)
         options.define("settings", default='', help="setting module name", type=str)
-        options.define("address", default=default_ip, help=f'listen host,default:{default_ip}', type=str)
+        options.define("address", default=address, help=f'listen host,default:{address}', type=str)
         options.define("log_patch", default=True,
                        help='Use ProcessTimedRotatingFileHandler instead of the default TimedRotatingFileHandler.',
                        type=bool)
