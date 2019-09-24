@@ -21,7 +21,7 @@ class PushToMQMiddleware(object):
         响应内容，chunk为携带响内容的list，你不可以直接对chunk赋值，
         可以通过chunk[index]来改写响应内容，或再次执行handler.write()
         """
-        if settings.sys.get('rabbitmq_config', None) and handler.response_to_mq:
+        if settings.get('rabbitmq_config', None) and handler.response_to_mq:
             data = handler.request.arguments
             # print('chunk', type(chunk), chunk)
             try:

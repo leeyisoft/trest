@@ -18,7 +18,7 @@ from tornado.util import import_object
 from trest.config import settings
 from ..logger import SysLogger
 from ..exception import ConfigError
-from ..storage import storage
+from ..storage import Storage
 from ..utils.encrypter import aes_decrypt
 
 
@@ -38,7 +38,9 @@ _CONNECTION_TYPE = (
 )
 
 _BASE_SQLALCHEMY_CONFIGURATION = {
-    'sqlalchemy.connect_args': {},
+    'sqlalchemy.connect_args': {
+        'connect_timeout': 3,
+    },
     'sqlalchemy.echo': False,
     'sqlalchemy.max_overflow': 10,
     'sqlalchemy.echo_pool': False,
@@ -124,16 +126,16 @@ class DBConfigParser(object):
     @classmethod
     def parser_sqlalchemy_conf(cls):
         try:
-            config = settings.SQLALCHEMY_CONFIGURATION
-        except ConfigError as ex:
-            SysLogger.warning("SQLALCHEMY_CONFIGURATION not found,using default sqlalchemy configuration")
+            config = settings.sqlalchemy
+        except Exception as ex:
+            SysLogger.warning("sqlalchemy not found,using default sqlalchemy configuration")
             config = _BASE_SQLALCHEMY_CONFIGURATION
 
-        poolclass_conf = _SQLALCHEMY_PREFIX + 'poolclass'
-        poolclass = config[poolclass_conf] if poolclass_conf in config else None
-
+        poolclass_cfg = _SQLALCHEMY_PREFIX + 'poolclass'
+        poolclass = config[poolclass_cfg] if poolclass_cfg in config else None
+        # print("poolclass_cfg ", poolclass_cfg)
         if poolclass:
-            config[poolclass_conf] = import_object('sqlalchemy.pool.' + poolclass)
+            config[poolclass_cfg] = import_object('sqlalchemy.pool.' + poolclass)
         return config
 
 
@@ -155,7 +157,7 @@ class _Connector(object):
         else:
             # 创建连接
             with _Connector._conn_lock:
-                connection_pool = storage()
+                connection_pool = Storage()
                 engines = DBConfigParser.parser_engines()
                 config = DBConfigParser.parser_sqlalchemy_conf()
                 try:

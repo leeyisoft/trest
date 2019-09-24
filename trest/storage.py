@@ -29,9 +29,6 @@ class Storage(dict):
     def __repr__(self):
         return '<Storage ' + dict.__repr__(self) + '>'
 
-
-storage = Storage
-
 class SortedDict(dict):
     """
     A dictionary that keeps its keys in the order in which they're inserted.
@@ -162,6 +159,26 @@ class SortedDict(dict):
         super(SortedDict, self).clear()
         self.keyOrder = []
 
+def _dict_to_storage_check_list(from_list):
+    for i,item in enumerate(from_list):
+        if type(item) == dict:
+            from_list[i] = dict_to_storage(item)
+        elif type(item) == list:
+            from_list[i] = _dict_to_storage_check_list(item)
+    return from_list
 
-sorteddict = SortedDict
+def dict_to_storage(from_dict):
+    """
+        >>> b = {'a': [ [ [{'a3':3}]]]}
+        >>> a = {'a': [ [ [{'a3':3, 'b': b}]]]}
+        dict_to_storage(a).a[0][0][0].b.a[0][0][0].a3 == 3
 
+        Returns:
+            [type] -- [description]
+    """
+    for k in from_dict.keys():
+        if type(from_dict[k]) == dict:
+            from_dict[k] = dict_to_storage(from_dict[k])
+        elif type(from_dict[k]) == list:
+            from_dict[k] = _dict_to_storage_check_list(from_dict[k])
+    return Storage(from_dict)

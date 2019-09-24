@@ -54,7 +54,7 @@ def push_to_mq(param, option):
     msg['msg_type'] = option.get('msg_type', '')
     msg['msg_md5'] = func.md5(json.dumps(param))
     msg['msg'] = param
-    pusher = Publisher(settings.sys.rabbitmq_config)
+    pusher = Publisher(settings.rabbitmq_config)
     option['exchange_type'] = option.get('exchange_type', 'topic')
     res = pusher.push(msg, option)
     # print(res)

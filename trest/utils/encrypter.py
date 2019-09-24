@@ -181,7 +181,7 @@ class AESSkyPay:
 
 
 def aes_decrypt(ciphertext, secret=None, prefix='aes:::'):
-    secret = secret if secret else settings.sys.default_aes_secret
+    secret = secret if secret else settings.default_aes_secret
     cipher = AESEncrypter(secret)
     prefix_len = len(prefix)
     if ciphertext[0:prefix_len]==prefix:
@@ -190,7 +190,7 @@ def aes_decrypt(ciphertext, secret=None, prefix='aes:::'):
         return ciphertext
 
 def aes_encrypt(plaintext, secret=None, prefix='aes:::'):
-    secret = secret if secret else settings.sys.default_aes_secret
+    secret = secret if secret else settings.default_aes_secret
     cipher = AESEncrypter(secret)
     encrypted = cipher.encrypt(plaintext)
     return '%s%s' % (prefix, encrypted)

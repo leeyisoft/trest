@@ -1,7 +1,12 @@
-"Thread-safe in-memory cache backend."
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+    Thread-safe in-memory cache backend.
+"""
 
 import time
-from .base import BaseCache, DEFAULT_TIMEOUT
+from .base import BaseCache
+from .base import DEFAULT_TIMEOUT
 from trest.utils import RWLock
 
 

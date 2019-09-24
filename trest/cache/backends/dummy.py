@@ -1,4 +1,8 @@
-"Dummy cache backend"
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+    Dummy cache backend"
+"""
 
 from .base import BaseCache, DEFAULT_TIMEOUT
 

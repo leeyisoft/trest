@@ -33,8 +33,7 @@ def connection_event():
 def ping_db(conn_, ping_inteval):
     @coroutine
     def ping_func():
-        ping_conn_count = settings.sqlalchemy.get('ping_conn_count', 5)
-        ping_conn_count = int(ping_conn_count)
+        ping_conn_count = settings.sqlalchemy.ping_conn_count
         yield [conn_.ping_db() for _ in range(ping_conn_count)]
 
     PeriodicCallback(ping_func, ping_inteval * 1000).start()
@@ -42,20 +41,12 @@ def ping_db(conn_, ping_inteval):
 class DBAlchemyMiddleware(object):
     connection = {}
     def process_init(self, application):
-        configed_db = False
-        try:
-            configed_db = settings.DATABASE_CONNECTION['default']['connections'][0]['HOST']
-            configed_db = True if configed_db else False
-        except Exception as e:
-            pass
-        if settings.sqlalchemy.get('ping_db') and configed_db:
-            self.connection = Connector.conn_pool
-            connection_event()
-            # 定时ping数据库，防止mysql go away，定时检测防丢
-            interval = int(settings.sqlalchemy.ping_db)
-            if interval > 0:
-                for k, conn in self.connection.items():
-                    ping_db(conn, interval)
+        self.connection = Connector.conn_pool
+        connection_event()
+        # 定时ping数据库，防止mysql go away，定时检测防丢
+        if settings.sqlalchemy.ping_db > 0:
+            for k, conn in self.connection.items():
+                ping_db(conn, settings.sqlalchemy.ping_db)
 
     def process_response(self, handler, clear, chunk):
         """

@@ -46,8 +46,8 @@ tree -I '*svn|*node_module*|*git|py3|*.pyc|__pycache__|statics'
 │   └── app2
 │   └── app3
 ├── configs
-│   ├── dev.ini
-│   └── local.ini
+│   ├── dev.yaml
+│   └── local.yaml
 ├── datas
 │   ├── locales
 │   │   ├── en_US.csv
@@ -70,10 +70,10 @@ tree -I '*svn|*node_module*|*git|py3|*.pyc|__pycache__|statics'
 
 * .env 环境配置文件，只有一个section [sys]，一个变量 TREST_ENV
 * configs 应用配置文件
-    * configs/local.ini 本地开发环境相关配置
-    * configs/dev.ini 开发环境相关配置
-    * configs/test.ini 测试环境相关配置
-    * configs/product.ini 生产环境相关配置
+    * configs/local.yaml 本地开发环境相关配置
+    * configs/dev.yaml 开发环境相关配置
+    * configs/test.yaml 测试环境相关配置
+    * configs/product.yaml 生产环境相关配置
 * applications 应用rest api相关代码
     * applications/common/models 公共应用数据模型层
     * applications/common/services 公共应用服务层
@@ -148,8 +148,8 @@ if __name__ == "__main__":
 在 项目根目录（ ROOT_PATH ） 下面创建 [.env 文件](https://gitee.com/leeyi/trest/blob/master/demo_dot.env)
 ```
 # TREST_ENV is not one of the local, dev, test, or product
-[sys]
-TREST_ENV = dev
+TREST_ENV : dev
+
 ```
 
 run
@@ -157,11 +157,12 @@ run
 pipenv install --skip-lock
 pipenv shell
 python server.py --port=5080
+python tests/app_demo/server.py --port=5081
 ```
 
-f'{ROOT_PATH}/configs/{env}.ini' demo
+f'{ROOT_PATH}/configs/{env}.yaml' demo
 
-like this [./tests/app_demo/configs/dev.ini](https://gitee.com/leeyi/trest/blob/master/tests/app_demo/configs/dev.ini)
+like this [./tests/app_demo/configs/dev.yaml](https://gitee.com/leeyi/trest/blob/master/tests/app_demo/configs/dev.yaml)
 
 # [开发约定](https://gitee.com/leeyi/trest/blob/master/promise.md)
 

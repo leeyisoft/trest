@@ -1,16 +1,22 @@
-"Memcached cache backend"
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+    Memcached cache backend
+"""
 
 import time
 import pickle
 import warnings
-from .base import CacheKeyWarning
-from .base import BaseCache, DEFAULT_TIMEOUT
 from trest.utils import string_types
 from trest.utils.func import safestr
 from trest.utils import cached_property
+from .base import CacheKeyWarning
+from .base import BaseCache
+from .base import DEFAULT_TIMEOUT
+
+
 # Memcached does not accept keys longer than this.
 MEMCACHE_MAX_KEY_LENGTH = 250
-
 
 class BaseMemcachedCache(BaseCache):
     def __init__(self, server, params, library, value_not_found_exception):

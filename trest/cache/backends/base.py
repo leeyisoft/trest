@@ -4,24 +4,21 @@ torngas cache backend base,from django
 from __future__ import unicode_literals
 
 import time
+
 from tornado.util import import_object
 
 from trest.exception import ConfigError
 
+
 class InvalidCacheBackendError(ConfigError):
     pass
-
 
 class CacheKeyWarning(RuntimeWarning):
     pass
 
-
 # Stub class to ensure not passing in a `timeout` argument results in
 # the default timeout
 DEFAULT_TIMEOUT = object()
-
-
-
 
 def default_key_func(key, key_prefix, version):
     """

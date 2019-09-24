@@ -9,9 +9,9 @@ from tornado.ioloop import PeriodicCallback
 from trest.config import settings
 
 from ..exception import ConfigError
-from .backends.base import InvalidCacheBackendError
-from .backends.base import CacheKeyWarning
 from .backends.base import BaseCache
+from .backends.base import CacheKeyWarning
+from .backends.base import InvalidCacheBackendError
 
 
 BACKENDS = {
@@ -28,7 +28,6 @@ DEFAULT_DUMMY_ALIAS = 'dummy'
 
 if DEFAULT_CACHE_ALIAS not in settings.CACHES:
     raise ConfigError("You must define a '%s' cache" % DEFAULT_CACHE_ALIAS)
-
 
 def _create_cache(backend, **kwargs):
     try:
@@ -55,14 +54,11 @@ def _create_cache(backend, **kwargs):
             "Could not find backend '%s': %s" % (backend, e))
     return backend_cls(location, params)
 
-
 class CacheHandler(object):
     """
     A Cache Handler to manage access to Cache instances.
-
     Ensures only one instance of each alias exists per thread.
     """
-
     def __init__(self):
         self._caches = local()
 
@@ -91,13 +87,10 @@ class CacheHandler(object):
         self._caches.caches[alias] = cache
         return cache
 
-
     def all(self):
         return getattr(self._caches, 'caches', {}).values()
 
-
 caches = CacheHandler()
-
 
 class DefaultCacheProxy(object):
     """
@@ -125,9 +118,7 @@ class DefaultCacheProxy(object):
     def __ne__(self, other):
         return caches[DEFAULT_CACHE_ALIAS] != other
 
-
 cache = DefaultCacheProxy()
-
 
 def close_caches(**kwargs):
     # Some caches -- python-memcached in particular -- need to do a cleanup at the

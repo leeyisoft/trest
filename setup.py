@@ -22,9 +22,9 @@ setup(
     platforms='any',
     install_requires=[
         'tornado>=6.0.0',
+        'pyyaml',
         'mysqlclient',
         'sqlalchemy',
-        'sqlalchemy-utils',
         'redis==2.10.6',
         'rsa',
         'pycryptodome',

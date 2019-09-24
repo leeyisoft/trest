@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-from .base import CacheMixin, CacheClient, InvalidCacheBackendError, DEFAULT_TIMEOUT
 from tornado.util import import_object
 from trest.storage import SortedDict
 from trest.utils.func import safestr
 from trest.exception import ConfigError
+
+from .base import CacheMixin
+from .base import CacheClient
+from .base import InvalidCacheBackendError
+from .base import DEFAULT_TIMEOUT
 
 try:
     import cPickle as pickle
@@ -20,29 +24,7 @@ except ImportError:
 from redis.connection import UnixDomainSocketConnection, Connection
 from redis.connection import DefaultParser
 
-PY3 = (sys.version_info >= (3,))
 
-if PY3:
-    bytes_type = bytes
-else:
-    bytes_type = str
-
-
-def python_2_unicode_compatible(klass):
-    """
-    A decorator that defines __unicode__ and __str__ methods under Python 2.
-    Under Python 3 it does nothing.
-
-    To support Python 2 and 3 with a single code base, define a __str__ method
-    returning text and apply this decorator to the class.
-    """
-    if not PY3:
-        klass.__unicode__ = klass.__str__
-        klass.__str__ = lambda self: self.__unicode__().encode('utf-8')
-    return klass
-
-
-@python_2_unicode_compatible
 class CacheKey(object):
     """
     A stub string class that we can use to check if a key was created already.
@@ -348,7 +330,7 @@ class RedisCache(CacheMixin, RedisClient):
             if value is None:
                 continue
             value = self.unpickle(value)
-            if isinstance(value, bytes_type):
+            if isinstance(value, bytes):
                 value = safestr(value)
             recovered_data[map_keys[key]] = value
         return recovered_data

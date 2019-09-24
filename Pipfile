@@ -9,9 +9,9 @@ gino = "*"
 
 [packages]
 tornado = "*"
+pyyaml = "*"
 mysqlclient = "*"
 sqlalchemy = "*"
-sqlalchemy-utils = "*"
 redis = "==2.10.6"
 rsa = "*"
 pycryptodome = "*"

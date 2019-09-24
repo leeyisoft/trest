@@ -73,7 +73,7 @@ class Server(object):
              middlewares=settings.MIDDLEWARE_CLASSES,
              **tornado_conf)
         app_obj.sentry_client = AsyncSentryClient(
-            settings.sys.get('sentry_url', '')
+            settings.get('sentry_url', '')
         )
         return app_obj
 
@@ -130,11 +130,11 @@ class Server(object):
     def _print_settings_info(self):
         if settings.debug:
             print('tornado version: %s' % tornado.version)
-            print('locale support: %s' % settings.sys.get('translation', False))
+            print('locale support: %s' % settings.get('translation', False))
             print('load apps:')
             for app in settings.INSTALLED_APPS:
                 print(' - %s' % str(app))
-            print('template engine: %s' % (settings.TEMPLATE_CONFIG.template_engine or 'default'))
+            print('template engine: %s' % (settings.TEMPLATE_CFG.template_engine or 'default'))
             print('server started. development server at http://%s:%s/' % (options.address, options.port))
 
     def _parse_command(self, args=None, final=False):
@@ -157,7 +157,7 @@ class Server(object):
         tornado_logger = logging.getLogger('tornado')
         enable_pretty_logging(logger=tornado_logger)
         logdir = options.logging_dir or settings.LOGGING_DIR
-        for log in settings.LOGGING:
+        for log in settings.log_cfg.logging:
             opt = OptionParser()
             define_logging_options(opt)
             self._define(opt)
@@ -200,8 +200,8 @@ class Server(object):
         except:
             pass
 
-        address = settings.sys.arbitrary_ip
-        options.define("port", default=settings.sys.port, help="run server on it", type=int)
+        address = settings.arbitrary_ip
+        options.define("port", default=settings.port, help="run server on it", type=int)
         options.define("settings", default='', help="setting module name", type=str)
         options.define("address", default=address, help=f'listen host,default:{address}', type=str)
         options.define("log_patch", default=True,
