@@ -26,9 +26,9 @@ class Demo2Handler(Handler):
     def get_demo2(self):
         return self.success(data = ['get', 'demo2', ])
 
-    @get('demo2')
+    @get(['demo2', '/demo2/d2', 'demo2/d3',])
     def get_demo2(self):
-        return self.success(data = ['get', 'demo23', ])
+        return self.success(data = ['demo2', '/demo2/d2', 'demo2/d3'])
 
     @delete('demo3/(?P<id>\d*)')
     def del_demo3(self, id):
