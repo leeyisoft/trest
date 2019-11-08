@@ -38,6 +38,28 @@ def md5(val):
 def uuid32():
     return str(uuid.uuid4()).replace('-','')
 
+def hump2underline(raw_str):
+    """
+    驼峰法转换为下划线
+    """
+    p = re.compile(r'([a-z]|\d)([A-Z])')
+    sub_str = p.sub(r'\1_\2', raw_str).lower()
+    return sub_str
+
+def underline2hump(raw_str, first_letter_upper = False):
+    """
+    下划线转换为驼峰法
+    >>> underline2hump('abc_def_ghi')
+    >>>     abcDefGhi
+    >>> underline2hump('abc_def_ghi', True)
+    >>>     AbcDefGhi
+    """
+    p = re.compile(r'(_\w)')
+    sub_str = p.sub(lambda x:x.group(1)[1].upper(), raw_str)
+    if first_letter_upper:
+        sub_str = sub_str[0:1].upper() + sub_str[1:]
+    return  sub_str
+
 def random_string(length=12, allowed_chars=None):
     """
     Return a securely generated random string.

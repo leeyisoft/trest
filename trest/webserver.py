@@ -83,7 +83,7 @@ class Server(object):
         if settings.translation:
             try:
                 from tornado import locale
-                locale.load_translations(settings.TRANSLATIONS_CONF.translations_dir)
+                locale.load_translations(settings.translations_dir)
             except:
                 warnings.warn('locale dir load failure,maybe your config file is not set correctly.')
 

@@ -13,8 +13,7 @@ class Uploader():
 
     @staticmethod
     def upload_img(file_md5, img, save_name, path, param):
-        prefix = settings.STATIC_PATH + '/upload/'
-        path = prefix + path
+        path = f'{settings.STATIC_PATH}/upload/{path}'
         if not os.path.exists(path):
             os.makedirs(path)
         path_file = path + save_name
@@ -24,18 +23,15 @@ class Uploader():
         with open(path_file, 'wb') as f:
             f.write(img['body'])
 
-        path = path_file.replace(settings.STATIC_PATH, '')
-        path = path[1:] if path[0:1]=='/' else path
-
+        prefix = settings.get('static_url_prefix', '/static')
         param.update({
             'file_md5': file_md5,
             'file_ext': file_ext,
             'file_size': FileUtil.file_size(path_file),
             'file_mimetype': FileUtil.file_mimetype(path_file),
             'origin_name': img['filename'],
-            'path_file': path,
+            'path_file': path_file.replace(settings.STATIC_PATH, prefix),
         })
-        # print('param', param)
         return param
 
 

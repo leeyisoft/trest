@@ -4,9 +4,8 @@
 base handler
 要获得中间件等特性需继承Handler
 """
-
-import tornado.locale
 import tornado.web
+import tornado.locale
 from tornado.escape import xhtml_escape
 from tornado.escape import json_encode
 from raven.contrib.tornado import SentryMixin
@@ -19,26 +18,16 @@ from .exception import JsonError
 class Handler(SentryMixin, tornado.web.RequestHandler):
     response_to_mq = False
 
+    def params(self):
+        return dict((k, self.get_argument(k)) for k, _ in self.request.arguments.items())
+
     def get_user_locale(self):
-        if settings.TRANSLATIONS_CONF.use_accept_language:
-            user_locale = self.get_argument('lang', None)
-            if user_locale in ['en', 'us','en_US', 'en-US']:
-                return tornado.locale.get('en_US')
-            elif user_locale in ['cn','zh_CN', 'zh-CN', 'zh-hans', 'zh-Hans-CN']:
-                return tornado.locale.get('zh_CN')
-            elif user_locale in ['ph','en_PH', 'en-PH']:
-                # 英国 -菲律宾共和国
-                return tornado.locale.get('en_PH')
-            elif user_locale in ['id','id_ID', 'id-ID']:
-                # 印尼 -印尼
-                return tornado.locale.get('id_ID')
-            elif user_locale in ['vi','vi_VN', 'vi-VN']:
-                # 越南 -越南
-                return tornado.locale.get('vi_VN')
-            elif user_locale in ['tw','zh_TW', 'zh-TW']:
-                return tornado.locale.get('zh_TW')
+        user_locale = self.get_argument('lang', None)
+        translation = settings.translation
+        if translation:
+            return tornado.locale.get(lang)
         # 默认中文
-        return tornado.locale.get(settings.TRANSLATIONS_CONF.locale_default)
+        return tornado.locale.get(settings.locale_default)
 
     def get_template_namespace(self):
         """Returns a dictionary to be used as the default template namespace.

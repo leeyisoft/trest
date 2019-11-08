@@ -36,18 +36,19 @@ with open(_yf, encoding='utf-8') as f:
 
 _default_cfg = yaml.safe_load(document)
 _default_cfg.update(cfg)
+
 settings = dict_to_storage(_default_cfg)
 
 settings.ROOT_PATH = ROOT_PATH
 settings.STATIC_PATH = os.path.join(ROOT_PATH, 'statics')
 settings.ENV = env
 
+
+settings.locale_default = 'zh_CN'
 # 是否开启国际化
-settings.TRANSLATIONS_CONF = dict_to_storage({
-    'translations_dir': os.path.join(ROOT_PATH, 'datas/locales'),
-    'locale_default': 'zh_CN',
-    'use_accept_language': True
-})
+# settings.translation == True 是有效
+if not settings.get('translations_dir'):
+    settings['translations_dir'] = os.path.join(ROOT_PATH, 'datas/locales')
 
 # tornado全局配置
 settings.TORNADO_CONF = {
