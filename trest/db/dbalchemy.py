@@ -104,13 +104,13 @@ class DBConfigParser(object):
             connections_str = connection_item['connections']
             for conn in connections_str:
                 # print("aes_decrypt", aes_decrypt(conn['PASSWD']))
-                dburl = url.URL(drivername=conn['DRIVER']
-                                , username=conn['UID']
-                                , password=aes_decrypt(conn['PASSWD'])
-                                , host=conn['HOST']
-                                , port=conn['PORT']
-                                , database=conn['DATABASE']
-                                , query=conn['QUERY'])
+                dburl = url.URL(drivername=conn['DRIVER'],
+                    username=conn['UID'],
+                    password=aes_decrypt(conn['PASSWD']),
+                    host=conn['HOST'],
+                    port=conn['PORT'],
+                    database=conn['DATABASE'],
+                    query=conn['QUERY'])
                 if conn['ROLE'] == _CONNECTION_TYPE[0]:
                     engines[connection_name]['master'].append(dburl)
                 elif conn['ROLE'] == _CONNECTION_TYPE[1]:
@@ -164,11 +164,11 @@ class _Connector(object):
                     for name, engine in engines.items():
                         kw = engine['kwargs']
                         connection_pool[name] = self.class_(config,
-                                                            master_url=engine['master'],
-                                                            slaves_url=engine['slaves'],
-                                                            session_conf=kw.pop('session', {}),
-                                                            **kw)
-                except Exception:
+                            master_url=engine['master'],
+                            slaves_url=engine['slaves'],
+                            session_conf=kw.pop('session', {}),
+                            **kw)
+                except Exception as e:
                     raise
 
             _Connector._conn = connection_pool

@@ -30,14 +30,18 @@ class Model(MetaBaseModel):
 
     @declared_attr
     def Q(cls) -> Query:
+        """ not using master """
         return Connector.get_conn(cls.__connection_name__).query()
 
     @declared_attr
+    def Update(cls) -> Query:
+        """ using master """
+        return Connector.get_conn(cls.__connection_name__).query(True)
+
+    @declared_attr
     def session(cls):
-        slave = Connector.get_session(cls.__connection_name__)['slave']
-        slave.using_master = lambda: \
-            Connector.get_session(cls.__connection_name__)['master']
-        return slave
+        """ using master """
+        return Connector.get_session(cls.__connection_name__)['master']
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():

@@ -39,7 +39,7 @@ class Application(web.Application):
                     this.middleware_fac.set_request(self)
                     try:
                         this.middleware_fac.run_call(self)
-                    except Exception:
+                    except Exception as e:
                         SysLogger.trace_logger.error(traceback.format_exc())
 
             httputil.HTTPServerRequest = HttpRequest

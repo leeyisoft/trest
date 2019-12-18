@@ -22,7 +22,7 @@ class Handler(SentryMixin, tornado.web.RequestHandler):
         return dict((k, self.get_argument(k)) for k, _ in self.request.arguments.items())
 
     def get_user_locale(self):
-        user_locale = self.get_argument('lang', None)
+        lang = self.get_argument('lang', None)
         translation = settings.translation
         if translation:
             return tornado.locale.get(lang)
