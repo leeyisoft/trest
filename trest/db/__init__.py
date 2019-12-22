@@ -9,10 +9,8 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.declarative import declarative_base
 
 from trest.utils import utime
-
 from .dbalchemy import Connector
 from .dbalchemy import Query
-
 
 
 MetaBaseModel = declarative_base()
@@ -56,7 +54,7 @@ class Model(MetaBaseModel):
             val = '' if val is None else val
             if isinstance(val, _no_str_tuple):
                 val = str(val)
-            if type(fields)==list and len(fields)>0:
+            if type(fields) == list and len(fields) > 0:
                 if column.name in fields:
                     items[column.name] = val
             else :

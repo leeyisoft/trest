@@ -5,7 +5,7 @@ import json
 import traceback
 
 
-class Publisher:
+class Publisher(object):
     connection = None
     channel = None
 

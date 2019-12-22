@@ -9,7 +9,7 @@ import tornado.httputil
 from trest.config import settings
 
 
-class Uploader():
+class Uploader(object):
 
     @staticmethod
     def upload_img(file_md5, img, save_name, path, param):

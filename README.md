@@ -7,6 +7,9 @@
 
 依赖 Tornado SQLAlchemy pycryptodome pytz 等
 
+* 开发约定 [https://gitee.com/leeyi/trest/blob/master/promise.md](https://gitee.com/leeyi/trest/blob/master/promise.md)
+* 其他约定遵从[Python风格规范](http://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_language_rules/) 、 [Python 编码规范](http://liyangliang.me/posts/2015/08/simple-python-style-guide/)
+
 #### 软件架构
 ```
 tree -I '*svn|*node_module*|*git|py3|*.pyc|__pycache__|statics'
@@ -20,9 +23,6 @@ tree -I '*svn|*node_module*|*git|py3|*.pyc|__pycache__|statics'
 │   │   ├── models
 │   │   │   └── *.py
 │   │   ├── filters
-│   │   │   ├── filters/requests
-│   │   │   │ └── *.py
-│   │   │   └── filters/responses
 │   │   │     └── *.py
 │   │   ├── services
 │   │   │   └── *.py
@@ -36,9 +36,6 @@ tree -I '*svn|*node_module*|*git|py3|*.pyc|__pycache__|statics'
 │   │   ├── services
 │   │   │   └── *.py
 │   │   ├── filters
-│   │   │   ├── filters/requests
-│   │   │   │ └── *.py
-│   │   │   └── filters/responses
 │   │   │     └── *.py
 │   │   ├── templates
 │   │   │   └── */*.html
