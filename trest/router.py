@@ -112,13 +112,16 @@ def _create_handlers(handler, package, path_method_dict):
         if not intersection :
             classname = f'Handler{md5(path)}'
             new_class = type(classname, (handler,), {})
-            new_class.__module__ = package
+            new_class.__module__ = handler.__module__
         else:
             new_class = handler
         # end if
         for (method2, (path2, val2, name2)) in dt2.items():
             setattr(new_class, method2, val2)
-        handlers.append((path, new_class, {'name':name2}))
+
+        for (_, (path2, _, name2)) in dt2.items():
+            handlers.append((path2, new_class, {'name':name2}))
+
     return handlers
 
 def get_handlers(app_name):
