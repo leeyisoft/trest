@@ -90,13 +90,11 @@ class Server(object):
         apps = settings.INSTALLED_APPS
         if not apps:
             raise ConfigError('settings.INSTALLED_APPS is empty')
-        rules = []
+        handlers = []
         for app_name in apps:
-            handlers = get_handlers(app_name)
-            app = self._install_application(handlers)
-            rules.append(Rule(PathMatches('/.*'), app))
-        # endfor
-        self.router = RuleRouter(rules)
+            handlers += get_handlers(app_name)
+        app = self._install_application(handlers)
+        self.router = RuleRouter([Rule(PathMatches('/.*'), app)])
 
     def _load_httpserver(self, sockets=None, **kwargs):
         if not sockets:
