@@ -29,6 +29,9 @@ class Handler(SentryMixin, tornado.web.RequestHandler):
         # 默认中文
         return tornado.locale.get(settings.locale_default)
 
+    def get_template_path(self):
+        return f'applications/{self.app_name}/templates'
+
     def get_template_namespace(self):
         """Returns a dictionary to be used as the default template namespace.
 

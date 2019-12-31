@@ -104,7 +104,7 @@ def _get_path_method(app_name, params):
             (method_path_set, path_method_dict) = _check_path(check_param)
     return path_method_dict
 
-def _create_handlers(handler, package, path_method_dict):
+def _create_handlers(app_name, handler, package, path_method_dict):
     handlers = []
     not_get = ['head', 'post', 'delete', 'patch', 'put', 'options']
     for (path, dt2) in path_method_dict.items():
@@ -116,6 +116,7 @@ def _create_handlers(handler, package, path_method_dict):
         else:
             new_class = handler
         # end if
+        setattr(new_class, 'app_name', app_name)
         for (method2, (path2, val2, name2)) in dt2.items():
             setattr(new_class, method2, val2)
 
@@ -141,7 +142,7 @@ def get_handlers(app_name):
             if not params:
                 continue
             path_method_dict = _get_path_method(app_name, params)
-            handlers += _create_handlers(handler, package, path_method_dict)
+            handlers += _create_handlers(app_name, handler, package, path_method_dict)
     return handlers
 
 def get(*dargs, **dkargs):
