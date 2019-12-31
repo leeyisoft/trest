@@ -7,13 +7,12 @@ import importlib
 import functools
 
 from tornado.util import import_object
-from tornado.web import RequestHandler
-from .utils.func import md5
 
-from .exception import JsonError
-from .utils.encrypter import RSAEncrypter
 from .config import settings
 from .handler import Handler
+from .exception import JsonError
+from .utils.func import md5
+from .utils.encrypter import RSAEncrypter
 
 
 def _get_modules(package="."):

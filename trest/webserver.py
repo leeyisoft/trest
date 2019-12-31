@@ -12,25 +12,25 @@ import tornado.options
 import tornado.httpserver
 
 from tornado.options import options
+from tornado.options import OptionParser
 from tornado.options import parse_command_line
 from tornado.options import add_parse_callback
-from tornado.options import OptionParser
-from tornado.log import LogFormatter
-from tornado.log import define_logging_options
 from tornado.util import import_object
 from tornado.routing import Rule
 from tornado.routing import RuleRouter
 from tornado.routing import PathMatches
+from tornado.log import LogFormatter
+from tornado.log import define_logging_options
 
 from raven.contrib.tornado import AsyncSentryClient
 
+from .config import settings
 from .exception import JsonError
 from .exception import ConfigError
 from .exception import ArgumentError
 from .application import Application
-from .config import settings
-from .logger import enable_pretty_logging
 from .router import get_handlers
+from .logger import enable_pretty_logging
 
 import importlib
 importlib.reload(sys)

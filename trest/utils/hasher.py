@@ -10,7 +10,6 @@ import base64
 import hmac
 
 from tornado.util import import_object
-
 from trest.config import settings
 
 from . import func

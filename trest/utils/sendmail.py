@@ -3,8 +3,8 @@
 import time
 import smtplib
 import tornado
-import email.mime.multipart
 import email.mime.text
+import email.mime.multipart
 
 from email.utils import parseaddr
 from email.utils import formataddr

@@ -3,9 +3,8 @@
 """
 异常Class
 """
-
-from tornado.web import HTTPError
 from tornado.web import Finish
+from tornado.web import HTTPError
 
 
 class ArgumentError(Exception):

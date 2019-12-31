@@ -4,7 +4,8 @@
     Dummy cache backend"
 """
 
-from .base import BaseCache, DEFAULT_TIMEOUT
+from .base import BaseCache
+from .base import DEFAULT_TIMEOUT
 
 
 class DummyCache(BaseCache):

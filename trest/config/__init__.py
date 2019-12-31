@@ -6,10 +6,9 @@ import sys
 import yaml
 from tornado.options import options
 
+from .config import document
 from ..storage import dict_to_storage
 from ..exception import ConfigError
-
-from .config import document
 
 
 # 检查全局变量 ROOT_PATH 设置

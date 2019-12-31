@@ -3,11 +3,10 @@
 """
     Thread-safe in-memory cache backend.
 """
-
 import time
+from trest.utils import RWLock
 from .base import BaseCache
 from .base import DEFAULT_TIMEOUT
-from trest.utils import RWLock
 
 
 # Global in-memory store of cache data. Keyed by name, to provide

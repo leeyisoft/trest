@@ -3,7 +3,8 @@
 import logging
 import logging.handlers
 from tornado.log import LogFormatter
-from .client import SysLogger, syslogger
+from .client import syslogger
+from .client import SysLogger
 
 
 def enable_pretty_logging(options=None, logger=None):

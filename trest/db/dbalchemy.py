@@ -7,11 +7,11 @@ import random
 import threading
 from math import ceil
 
-from sqlalchemy import engine_from_config
-from sqlalchemy.orm import scoped_session
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import Query
 from sqlalchemy.engine import url
+from sqlalchemy.orm import Query
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session
+from sqlalchemy import engine_from_config
 
 from tornado.util import import_object
 

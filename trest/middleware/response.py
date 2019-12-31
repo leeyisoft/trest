@@ -5,9 +5,7 @@
 接口请求response之后发送MQ消息的中间件
 """
 from tornado import gen
-
 from trest.config import settings
-
 from ..amqp import push_to_mq
 
 

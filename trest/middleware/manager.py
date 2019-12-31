@@ -39,17 +39,15 @@ class MyMiddleware(object):
     def process_exception(self,handler, clear, typ, value, tb):
         异常处理
 """
-from functools import partial
-from tornado.util import import_object
-from tornado.log import gen_log
-from tornado import gen
 from copy import copy
 from collections import deque
-try:
-    from tornado.concurrent import is_future
-except ImportError:
-    from ..utils import is_future
+from functools import partial
+from tornado import gen
+from tornado.log import gen_log
+from tornado.util import import_object
+from tornado.concurrent import is_future
 from ..exception import NotCallableError
+
 
 class Manager(object):
     def __init__(self):

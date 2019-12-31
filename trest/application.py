@@ -4,8 +4,8 @@
 import traceback
 
 from tornado import web
-from tornado import version_info
 from tornado import httputil
+from tornado import version_info
 
 from .logger import SysLogger
 from .middleware.manager import Manager

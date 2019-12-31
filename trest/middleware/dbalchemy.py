@@ -4,16 +4,15 @@
 """
 dbalchemy中间件，加入此中间件可以自动帮助dbalchemy模块处理连接的关闭
 """
-
-from ..db.dbalchemy import Connector
-from tornado.ioloop import PeriodicCallback
-from tornado.gen import coroutine
 from sqlalchemy import exc
 from sqlalchemy import event
 from sqlalchemy.pool import Pool
+from tornado.gen import coroutine
+from tornado.ioloop import PeriodicCallback
 
-from ..logger import SysLogger
 from trest.config import settings
+from ..db.dbalchemy import Connector
+from ..logger import SysLogger
 
 
 def connection_event():

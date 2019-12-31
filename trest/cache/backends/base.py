@@ -4,9 +4,7 @@ torngas cache backend base,from django
 from __future__ import unicode_literals
 
 import time
-
 from tornado.util import import_object
-
 from trest.exception import ConfigError
 
 
