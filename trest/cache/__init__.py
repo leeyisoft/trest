@@ -15,17 +15,12 @@ from .backends.base import InvalidCacheBackendError
 
 
 BACKENDS = {
-    'memcached': 'memcached',
     'localcache': 'localcache',
     'dummy': 'dummy',
     'redis': 'rediscache'
 }
 
-DEFAULT_CACHE_ALIAS = 'default_redis'
-DEFAULT_REDIS_ALIAS = 'default_redis'
-DEFAULT_MEMCACHED_ALIAS = 'default_memcache'
-DEFAULT_DUMMY_ALIAS = 'dummy'
-
+DEFAULT_CACHE_ALIAS = settings.default_cache
 if DEFAULT_CACHE_ALIAS not in settings.CACHES:
     raise ConfigError("You must define a '%s' cache" % DEFAULT_CACHE_ALIAS)
 

@@ -4,7 +4,7 @@
     Thread-safe in-memory cache backend.
 """
 import time
-from trest.utils import RWLock
+from trest.utils.object import RWLock
 from .base import BaseCache
 from .base import DEFAULT_TIMEOUT
 

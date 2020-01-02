@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-document = """
-# f'{ROOT_PATH}/configs/{env}.yaml'
+document = """# f'{ROOT_PATH}/configs/{env}.yaml'
 # 注意配置解析出来都是字符串，请不要带单引号或者双引号
 # 例如 '0.0.0.0' "0.0.0.0" 都会报错
 
@@ -25,9 +24,8 @@ front_session_key : 171630947de24c969c28b2d178c4e0fe
 valid_code_key : ab1195c6f0084b4f8b007d3aa7628a38
 token_key : f30a2331813f46d0adc2bcf26fcbbbf4
 
-
 INSTALLED_APPS :
-    - app1
+    - admin
 
 rabbitmq_config : ''
 sentry_url :
@@ -44,9 +42,6 @@ SUPER_ADMIN :
     - 1 # admin uid
     - 2 #
 
-# 是否开启国际化
-translation : true
-
 PASSWORD_HASHERS :
     # 第一个元素为默认加密方式
     - 'trest.utils.hasher.PBKDF2PasswordHasher'
@@ -59,15 +54,6 @@ MIDDLEWARE_CLASSES :
     - 'trest.middleware.AccessLogMiddleware'
     - 'trest.middleware.PushToMQMiddleware'
 
-session :
-    cache_alias : default_redis
-    name : nkzpg9NKBpKS2iaK
-    cookie_domain :
-    cookie_path : /
-    expires : 86400
-    secret : fLjUfxqXtfNoIldA0A0J
-    version : v0.1.0
-
 # sqlalchemy配置，列出部分，可自行根据sqlalchemy文档增加配置项
 # 该配置项对所有连接全局共享
 sqlalchemy :
@@ -78,7 +64,7 @@ sqlalchemy :
     'sqlalchemy.connect_args' : {
         'connect_timeout' : 3
     }
-    'sqlalchemy.echo' : true
+    'sqlalchemy.echo' : false
     'sqlalchemy.max_overflow' : 10
     'sqlalchemy.echo_pool' : true
     'sqlalchemy.pool_timeout' : 5
@@ -98,9 +84,9 @@ DATABASE_CONNECTION :
             DRIVER : 'mysql+mysqldb'
             UID : root
             # 进过AES加密的密码，格式 aes::: + ciphertext
-            PASSWD : '123456'
+            PASSWD : 'eb27acWq#16E1'
             HOST : '127.0.0.1'
-            PORT : 3306
+            PORT : 33061
             DATABASE : 'db_py_admin'
             QUERY : {'charset' : 'utf8mb4'}
         -
@@ -108,15 +94,19 @@ DATABASE_CONNECTION :
             DRIVER : 'mysql+mysqldb'
             UID : root
             # 进过AES加密的密码，格式 aes::: + ciphertext
-            PASSWD : '123456'
+            PASSWD : 'eb27acWq#16E1'
             HOST : '127.0.0.1'
-            PORT : 3306
+            PORT : 33062
             DATABASE : 'db_py_admin'
             QUERY : {'charset' : 'utf8mb4'}
 
 ###########
 # 缓存配置 #
 ###########
+
+# default rediscache 其中之一
+default_cache: 'default'
+
 CACHES :
     'default':
         'BACKEND': 'trest.cache.backends.localcache.LocMemCache'
@@ -125,12 +115,12 @@ CACHES :
             'MAX_ENTRIES': 10000
             'CULL_FREQUENCY': 3
 
-    'default_redis':
+    'rediscache':
         'BACKEND': 'trest.cache.backends.rediscache.RedisCache'
         'LOCATION': '127.0.0.1:6379'
         'OPTIONS':
             'DB': 0
-            'PASSWORD': ''
+            'PASSWORD': 'abc123456'
             'PARSER_CLASS': 'redis.connection.DefaultParser'
             # 定时ping redis连接池，防止被服务端断开连接（s秒）
             'PING_INTERVAL': 120
@@ -222,5 +212,4 @@ email :
     smtp_sever :
     smtp_port :
     auth_code :
-
 """
