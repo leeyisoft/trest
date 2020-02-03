@@ -17,13 +17,15 @@ if hasattr(options, 'ROOT_PATH') and os.path.exists(options.ROOT_PATH):
 else:
     raise ConfigError('ROOT_PATH is not configured')
 
-with open(f'{ROOT_PATH}/.env', encoding='utf-8') as f:
-    cfg = yaml.safe_load(f)
+env = os.getenv('RUNTIME_ENV')
+if not env:
+    with open(f'{ROOT_PATH}/.env', encoding='utf-8') as f:
+        cfg = yaml.safe_load(f)
+    env = cfg.get('RUNTIME_ENV','')
 
-env = cfg.get('TREST_ENV','')
-# 检查系统环境变量 TREST_ENV 设置
+# 检查系统环境变量 RUNTIME_ENV 设置
 if env not in ['local', 'dev', 'test', 'product']:
-    msg = f'The system variable TREST_ENV ({env}) is not one of the local, dev, test, or product'
+    msg = f'The system variable RUNTIME_ENV ({env}) is not one of the local, dev, test, or product'
     raise ConfigError(msg)
 
 _yf = f'{ROOT_PATH}/configs/{env}.yaml'
