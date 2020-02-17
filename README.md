@@ -22,7 +22,7 @@ tree -I '*svn|*node_module*|*git|py3|*.pyc|__pycache__|statics'
 │   │   ├── const.py
 │   │   ├── models
 │   │   │   └── *.py
-│   │   ├── filters
+│   │   ├── assemblers
 │   │   │     └── *.py
 │   │   ├── services
 │   │   │   └── *.py
@@ -35,7 +35,7 @@ tree -I '*svn|*node_module*|*git|py3|*.pyc|__pycache__|statics'
 │   │   ├── modules.py
 │   │   ├── services
 │   │   │   └── *.py
-│   │   ├── filters
+│   │   ├── assemblers
 │   │   │     └── *.py
 │   │   ├── templates
 │   │   │   └── */*.html
@@ -74,17 +74,15 @@ tree -I '*svn|*node_module*|*git|py3|*.pyc|__pycache__|statics'
 * applications 应用rest api相关代码
     * applications/common/models 公共应用数据模型层
     * applications/common/services 公共应用服务层
-    * applications/common/filters/requests 公共应用请求过滤器层
-    * applications/common/filters/responses 公共应用响应过滤器层
+    * applications/common/assemblers 公共组装器层
     * applications/common/const.py 公共应用常量
     * applications/common/utils.py 公共应用助手函数
     * applications/app1 独立应用
-    * applications/app1/handlers app1用控制器层
-    * applications/app1/models app1用数据模型层
-    * applications/app1/services app1应用服务层
-    * applications/app1/templates app1应用视图层
-    * applications/app1/filters/requests app1应用请求过滤器层
-    * applications/app1/filters/responses app1应用响应过滤器层
+    * applications/app1/handlers app1用控制器层，有路由器调用，负责接收并且校验参数
+    * applications/app1/services app1应用服务层，在控制器里面调用，负责一个业务逻辑
+    * applications/app1/models app1用数据模型层，在服务层调用，负责对一个数据库表CURD操作
+    * applications/app1/assemblers app1组装器层，在控制器里面调用，负责把服务层数据响应给API
+    * applications/app1/templates app1应用视图层，渲染service数据
 * datas 数据
     * datas/locales 多语言数据
     * datas/json JSON数据文件
