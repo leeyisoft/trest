@@ -28,18 +28,18 @@ class Model(MetaBaseModel):
 
     @declared_attr
     def Q(cls) -> Query:
-        """ not using master """
+        """ not using main """
         return Connector.get_conn(cls.__connection_name__).query()
 
     @declared_attr
     def Update(cls) -> Query:
-        """ using master """
+        """ using main """
         return Connector.get_conn(cls.__connection_name__).query(True)
 
     @declared_attr
     def session(cls):
-        """ using master """
-        return Connector.get_session(cls.__connection_name__)['master']
+        """ using main """
+        return Connector.get_session(cls.__connection_name__)['main']
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():

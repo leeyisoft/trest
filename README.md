@@ -7,7 +7,7 @@
 
 依赖 Tornado SQLAlchemy pycryptodome pytz 等
 
-* 开发约定 [https://gitee.com/leeyi/trest/blob/master/promise.md](https://gitee.com/leeyi/trest/blob/master/promise.md)
+* 开发约定 [https://gitee.com/leeyi/trest/blob/main/promise.md](https://gitee.com/leeyi/trest/blob/main/promise.md)
 * 其他约定遵从[Python风格规范](http://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_language_rules/) 、 [Python 编码规范](http://liyangliang.me/posts/2015/08/simple-python-style-guide/)
 
 #### 软件架构
@@ -100,10 +100,10 @@ tree -I '*svn|*node_module*|*git|py3|*.pyc|__pycache__|statics'
 #### 安装教程
 
 把下面一行代码放入Pipfile文件 [packages]下面
-> trest = {editable = true,git = "https://gitee.com/leeyi/trest.git",ref = "master"}
+> trest = {editable = true,git = "https://gitee.com/leeyi/trest.git",ref = "main"}
 
 或者直接
-> pipenv install -e git+https://gitee.com/leeyi/trest.git@master#egg=trest
+> pipenv install -e git+https://gitee.com/leeyi/trest.git@main#egg=trest
 
 或者
 > pip install git+https://gitee.com/leeyi/trest.git
@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
 ```
 
-在 项目根目录（ ROOT_PATH ） 下面创建 [.env 文件](https://gitee.com/leeyi/trest/blob/master/demo_dot.env)
+在 项目根目录（ ROOT_PATH ） 下面创建 [.env 文件](https://gitee.com/leeyi/trest/blob/main/demo_dot.env)
 ```
 # RUNTIME_ENV is not one of the local, dev, test, or product
 # the colon must have Spaces around it
@@ -157,11 +157,11 @@ python tests/app_demo/server.py --port=5081
 
 f'{ROOT_PATH}/configs/{env}.yaml' demo
 
-like this [./tests/app_demo/configs/dev.yaml](https://gitee.com/leeyi/trest/blob/master/tests/app_demo/configs/dev.yaml)
+like this [./tests/app_demo/configs/dev.yaml](https://gitee.com/leeyi/trest/blob/main/tests/app_demo/configs/dev.yaml)
 
-# [开发约定](https://gitee.com/leeyi/trest/blob/master/promise.md)
+# [开发约定](https://gitee.com/leeyi/trest/blob/main/promise.md)
 
-* 开发约定 [https://gitee.com/leeyi/trest/blob/master/promise.md](https://gitee.com/leeyi/trest/blob/master/promise.md)
+* 开发约定 [https://gitee.com/leeyi/trest/blob/main/promise.md](https://gitee.com/leeyi/trest/blob/main/promise.md)
 * 其他约定遵从[Python风格规范](http://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_language_rules/) 、 [Python 编码规范](http://liyangliang.me/posts/2015/08/simple-python-style-guide/)
 
 #### Demo
@@ -219,6 +219,15 @@ raise JsonError('msg', 0)
 raise JsonError('msg', 1, [])
 raise JsonError('msg', 1, [1,2,3])
 ```
+
+#### 避免 master/slave 等术语
+
+Old | New | 说明
+---|---|---
+master | main | 主要的
+slave | subordinate | 从属的
+blacklist | denylist | 拒绝名单
+whitelist | allowlist | 允许名单
 
 #### 参与贡献
 

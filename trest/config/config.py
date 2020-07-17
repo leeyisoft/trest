@@ -75,12 +75,12 @@ sqlalchemy :
     'sqlalchemy.poolclass' : QueuePool
 
 # 数据库连接字符串，元祖，
-# 每组为n个数据库连接，有且只有一个master，可配与不配slave
+# 每组为n个数据库连接，有且只有一个main，可配与不配subordinate
 DATABASE_CONNECTION :
     default :
         connections :
         -
-            ROLE: 'master'
+            ROLE: 'main'
             DRIVER : 'mysql+mysqldb'
             UID : root
             # 进过AES加密的密码，格式 aes::: + ciphertext
@@ -90,7 +90,7 @@ DATABASE_CONNECTION :
             DATABASE : 'db_py_admin'
             QUERY : {'charset' : 'utf8mb4'}
         -
-            ROLE : 'slave'
+            ROLE : 'subordinate'
             DRIVER : 'mysql+mysqldb'
             UID : root
             # 进过AES加密的密码，格式 aes::: + ciphertext

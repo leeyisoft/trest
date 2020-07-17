@@ -33,8 +33,8 @@ __all__ = [
 
 _SQLALCHEMY_PREFIX = 'sqlalchemy.'
 _CONNECTION_TYPE = (
-    'master',
-    'slave',
+    'main',
+    'subordinate',
 )
 
 _BASE_SQLALCHEMY_CONFIGURATION = {
@@ -97,8 +97,8 @@ class DBConfigParser(object):
 
             engines[connection_name] = {
                 'kwargs': connection_item.get('kwargs', {}),
-                'master': [],
-                'slaves': [],
+                'main': [],
+                'subordinates': [],
             }
 
             connections_str = connection_item['connections']
@@ -112,14 +112,14 @@ class DBConfigParser(object):
                     database=conn['DATABASE'],
                     query=conn['QUERY'])
                 if conn['ROLE'] == _CONNECTION_TYPE[0]:
-                    engines[connection_name]['master'].append(dburl)
+                    engines[connection_name]['main'].append(dburl)
                 elif conn['ROLE'] == _CONNECTION_TYPE[1]:
-                    engines[connection_name]['slaves'].append(dburl)
+                    engines[connection_name]['subordinates'].append(dburl)
                 else:
                     raise ConfigError('role %s not allowed.' % conn['ROLE'])
 
-            if not len(engines[connection_name]['master']):
-                raise ConfigError('conn:%s ,master connection not found.' % connection_name)
+            if not len(engines[connection_name]['main']):
+                raise ConfigError('conn:%s ,main connection not found.' % connection_name)
 
         return engines
 
@@ -164,8 +164,8 @@ class _Connector(object):
                     for name, engine in engines.items():
                         kw = engine['kwargs']
                         connection_pool[name] = self.class_(config,
-                            master_url=engine['master'],
-                            slaves_url=engine['slaves'],
+                            main_url=engine['main'],
+                            subordinates_url=engine['subordinates'],
                             session_conf=kw.pop('session', {}),
                             **kw)
                 except Exception as e:
@@ -206,11 +206,11 @@ class BaseQuery(Query):
 
 
 class ConnBase(object):
-    def __init__(self, config=None, master_url=None, slaves_url=None, session_conf=None, **kwargs):
+    def __init__(self, config=None, main_url=None, subordinates_url=None, session_conf=None, **kwargs):
         self.kwargs = kwargs or {}
         self.config = config or {}
-        self.master_url = master_url
-        self.slaves_url = slaves_url or []
+        self.main_url = main_url
+        self.subordinates_url = subordinates_url or []
         self.session_conf = session_conf or {}
 
     @property
@@ -221,7 +221,7 @@ class ConnBase(object):
     def session(self):
         raise NotImplementedError
 
-    def query(self, using_master=False):
+    def query(self, using_main=False):
         raise NotImplementedError
 
     def remove(self):
@@ -239,105 +239,105 @@ class ConnBase(object):
 
 
 class SQLAlchemy(ConnBase):
-    def __init__(self, config=None, master_url=None, slaves_url=None, session_conf=None, **kwargs):
+    def __init__(self, config=None, main_url=None, subordinates_url=None, session_conf=None, **kwargs):
 
         """
         连接对象init
         :param base_conf: 全局配置，sqlalchemy.开头
-        :param master_url: 主库连接
-        :param slaves_url: 从库连接
+        :param main_url: 主库连接
+        :param subordinates_url: 从库连接
         :param others_url: 其他类型，暂未实现
         :param kwargs: 自定义配置
         """
         super(SQLAlchemy, self).__init__(config=config,
-            master_url=master_url,
-            slaves_url=slaves_url,
+            main_url=main_url,
+            subordinates_url=subordinates_url,
             session_conf=session_conf,
             **kwargs)
         # 每一个engine都会有一个factory，感觉挺闹心，要是有10个engine。。就得10个factory，未来寻找一下全局只有一个factory的方案
-        self._slave_tmp = None
+        self._subordinate_tmp = None
         session_conf['query_cls'] = BaseQuery
-        self._master_engine = engine_from_config(self.config, prefix=_SQLALCHEMY_PREFIX, url=master_url[0], **kwargs)
-        self._master_session = create_session(self._master_engine, **session_conf)
-        self._slaves_session = []
-        self._slave_engine = []
+        self._main_engine = engine_from_config(self.config, prefix=_SQLALCHEMY_PREFIX, url=main_url[0], **kwargs)
+        self._main_session = create_session(self._main_engine, **session_conf)
+        self._subordinates_session = []
+        self._subordinate_engine = []
 
-        for slave in slaves_url:
-            slave_engine = engine_from_config(self.config, prefix=_SQLALCHEMY_PREFIX, url=slave, **kwargs)
-            self._slave_engine.append(slave_engine)
-            self._slaves_session.append(create_session(slave_engine, **session_conf))
+        for subordinate in subordinates_url:
+            subordinate_engine = engine_from_config(self.config, prefix=_SQLALCHEMY_PREFIX, url=subordinate, **kwargs)
+            self._subordinate_engine.append(subordinate_engine)
+            self._subordinates_session.append(create_session(subordinate_engine, **session_conf))
 
     def remove(self):
         # 连接释放通过可通过中间件提供，用户可自行决定是否要使用
-        self._master_session.remove()
-        if self._slaves_session:
-            for slave in self._slaves_session:
-                slave.remove()
-        self._slave_tmp = None
+        self._main_session.remove()
+        if self._subordinates_session:
+            for subordinate in self._subordinates_session:
+                subordinate.remove()
+        self._subordinate_tmp = None
 
     @property
     def session(self):
         return {
-            'master': self.using_master_session(),
-            'slave': self.using_slave_session()
+            'main': self.using_main_session(),
+            'subordinate': self.using_subordinate_session()
         }
 
-    def using_master_session(self):
+    def using_main_session(self):
         """
         主库session
         """
-        return self._master_session
+        return self._main_session
 
     @property
     def engines(self):
         return {
-            'master': self._master_engine,
-            'slaves': self._slave_engine
+            'main': self._main_engine,
+            'subordinates': self._subordinate_engine
         }
 
-    def using_slave_session(self):
+    def using_subordinate_session(self):
         """
         从库session
         """
-        if not self._slave_tmp:
-            if self._slaves_session:
-                self._slave_tmp = random.choice(self._slaves_session)
+        if not self._subordinate_tmp:
+            if self._subordinates_session:
+                self._subordinate_tmp = random.choice(self._subordinates_session)
             else:
-                self._slave_tmp = self._master_session
+                self._subordinate_tmp = self._main_session
 
-        return self._slave_tmp
+        return self._subordinate_tmp
 
-    def query(self, using_master=False):
-        if using_master:
-            return self.using_master_session().query_property(BaseQuery)
+    def query(self, using_main=False):
+        if using_main:
+            return self.using_main_session().query_property(BaseQuery)
 
-        if self._slaves_session:
-            return self.using_slave_session().query_property(BaseQuery)
+        if self._subordinates_session:
+            return self.using_subordinate_session().query_property(BaseQuery)
         else:
-            return self.using_master_session().query_property(BaseQuery)
+            return self.using_main_session().query_property(BaseQuery)
 
     async def ping_db(self):
         # 防止数据库失联，定时ping一下
         ping = 'SELECT 0'
         try:
-            self._master_session.execute(ping)
-            self._master_session.remove()
-            for slave in self._slaves_session:
-                slave.execute(ping)
-                slave.remove()
+            self._main_session.execute(ping)
+            self._main_session.remove()
+            for subordinate in self._subordinates_session:
+                subordinate.execute(ping)
+                subordinate.remove()
         except Exception as ex:
             SysLogger.error('ping mysql error:' + str(ex))
 
     def create_db(self):
 
-        if not self._master_engine.echo:
-            self._master_engine.echo = True
-        Model.metadata.create_all(self._master_engine)
+        if not self._main_engine.echo:
+            self._main_engine.echo = True
+        Model.metadata.create_all(self._main_engine)
 
     def drop_db(self):
-        if not self._master_engine.echo:
-            self._master_engine.echo = True
-        Model.metadata.drop_all(self._master_engine)
+        if not self._main_engine.echo:
+            self._main_engine.echo = True
+        Model.metadata.drop_all(self._main_engine)
 
 
 def get_connector(conn_class_):
